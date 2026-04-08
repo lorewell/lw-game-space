@@ -32,7 +32,7 @@ export const vScrollbar = {
   },
   beforeUnmount(el: ScrollbarElement) {
     el._osInstance?.destroy()
-    el._osInstance = null
+    el._osInstance = undefined
   }
 }
 

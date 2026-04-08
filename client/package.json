@@ -12,6 +12,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
     "axios": "^1.14.0",
+    "colyseus.js": "^0.15.28",
     "element-plus": "^2.13.6",
     "overlayscrollbars": "^2.15.1",
     "pinia": "^3.0.4",

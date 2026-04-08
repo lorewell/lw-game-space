@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 import http from "http";
 import { GameRoom } from "./rooms/GameRoom";
+import { HallRoom } from "./rooms/HallRoom";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -23,6 +24,7 @@ const gameServer = new Server({
 });
 
 gameServer.define("game_room", GameRoom);
+gameServer.define("hall_room", HallRoom);
 
 gameServer.listen(PORT).then(() => {
   console.log(`✅ 游戏服务器已启动，端口: ${PORT}`);

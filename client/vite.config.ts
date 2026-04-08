@@ -9,7 +9,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig({
   server: {
     host: 'v.yingcaicheng.net',
-    port: 8400,
+    port: 8848,
     open: true
   },
   plugins: [

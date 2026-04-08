@@ -50,8 +50,13 @@
   }
 }
 
-body {
+html, body {
   margin: 0;
+  padding: 0;
+  /* 禁止溢出内容显示，同时也禁用了滚动 */
+  overflow: hidden; 
+  /* 针对触摸设备的额外保险，防止橡皮筋回弹效果 */
+  overscroll-behavior: none;
 }
 
 h1,
@@ -154,18 +159,6 @@ code {
     transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
       scale(0.8);
   }
-}
-
-#app {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
 }
 
 #center {
