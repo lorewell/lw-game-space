@@ -1,5 +1,10 @@
-import { OverlayScrollbars } from 'overlayscrollbars'
+import { OverlayScrollbars, type PartialOptions } from 'overlayscrollbars'
 import 'overlayscrollbars/overlayscrollbars.css'
+import type { DirectiveBinding } from 'vue'
+
+interface ScrollbarElement extends HTMLElement {
+  _osInstance?: ReturnType<typeof OverlayScrollbars>
+}
 
 /**
  * v-scrollbar 指令
@@ -8,7 +13,7 @@ import 'overlayscrollbars/overlayscrollbars.css'
  *   <div v-scrollbar="{ scrollbars: { autoHide: 'scroll' } }"></div>
  */
 export const vScrollbar = {
-  mounted(el, binding) {
+  mounted(el: ScrollbarElement, binding: DirectiveBinding<PartialOptions>) {
     const options = binding.value ?? {}
     const instance = OverlayScrollbars(el, {
       scrollbars: {
@@ -19,13 +24,13 @@ export const vScrollbar = {
     })
     el._osInstance = instance
   },
-  updated(el, binding) {
+  updated(el: ScrollbarElement, binding: DirectiveBinding<PartialOptions>) {
     const instance = el._osInstance
     if (instance && binding.value && binding.oldValue !== binding.value) {
       instance.options(binding.value, true)
     }
   },
-  beforeUnmount(el) {
+  beforeUnmount(el: ScrollbarElement) {
     el._osInstance?.destroy()
     el._osInstance = null
   }

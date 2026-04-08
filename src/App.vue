@@ -1,35 +1,34 @@
-<script setup>
+<script setup lang="ts">
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import zhCN from 'ant-design-vue/es/locale/zh_CN'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { useSystemStore } from './stores/system'
 import { storeToRefs } from 'pinia'
-import { LoadingOutlined } from '@ant-design/icons-vue'
-import { theme } from '@/config/system'
+import { Loading } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const systemStore = useSystemStore()
 
 const { loading, loadingTip } = storeToRefs(systemStore)
-const layoutMap = {
+const layoutMap: Record<string, typeof DefaultLayout> = {
   DefaultLayout
 }
-const layout = computed(() => layoutMap[route.meta?.layout] || DefaultLayout)
+const layout = computed(() => layoutMap[route.meta?.layout as string] ?? DefaultLayout)
 </script>
 
 <template>
-  <AConfigProvider :locale="zhCN" :theme="{ token: theme }">
+  <ElConfigProvider :locale="zhCn">
     <component :is="layout" />
-  </AConfigProvider>
+  </ElConfigProvider>
 
   <Transition name="fade">
     <div v-if="loading" class="loading">
-      <LoadingOutlined class="loading-icon"></LoadingOutlined>
+      <ElIcon class="loading-icon" :size="30"><Loading /></ElIcon>
       <div class="m-t-16">{{ loadingTip }}</div>
     </div>
   </Transition>
 </template>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .loading {
   position: fixed;
   width: 100%;
@@ -39,12 +38,11 @@ const layout = computed(() => layoutMap[route.meta?.layout] || DefaultLayout)
   text-align: center;
   background: rgba(255, 255, 255, 0.6);
   z-index: 9999;
-  color: @primary-color;
+  color: var(--el-color-primary);
 
   .loading-icon {
     margin-top: 30vh;
-    color: @primary-color;
-    font-size: 30px;
+    color: var(--el-color-primary);
   }
 }
 
