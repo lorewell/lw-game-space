@@ -10,5 +10,9 @@ export const useUserStore = defineStore('user', {
     sessionId: '',
   }),
 
-  actions: {}
+  actions: {
+    setUserInfo(info: Partial<UserType>) {
+      Object.assign(this, info)
+    }
+  }
 })

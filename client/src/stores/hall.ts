@@ -22,6 +22,7 @@ export const useHallStore = defineStore('hall', {
 
       try {
         room = await client.joinOrCreate('hall_room', {
+          id: userStore.id, // 传递持久化的 userId
           name: userStore.name || undefined,
           avatar: userStore.avatar || undefined,
           level: userStore.level,

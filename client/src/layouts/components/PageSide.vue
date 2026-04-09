@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted, watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useSystemStore } from '@/stores/system'
 import { useHallStore } from '@/stores/hall'
+import { getUserInfo, updateUserInfo } from '@/api/user'
 
 const userStore = useUserStore()
 const systemStore = useSystemStore()
@@ -34,10 +36,93 @@ function handleKeydown(e: Event) {
   }
 }
 
+async function userLogin() {
+  let userId = localStorage.getItem('userId')
+  if (!userId) {
+    // 第一次登录，生成随机 ID
+    userId = `user_${Math.random().toString(36).slice(2, 9)}_${Date.now().toString(36)}`
+    localStorage.setItem('userId', userId)
+  }
+
+  // 请求后端获取用户信息（不存在则自动创建）
+  const res = await getUserInfo(userId)
+  if (res.code === 0 && res.data) {
+    userStore.setUserInfo({
+      id: res.data.id || userId,
+      name: res.data.name,
+      avatar: res.data.avatar,
+      level: res.data.level
+    })
+  } else {
+    // 降级：直接用本地 ID
+    userStore.setUserInfo({ id: userId, name: userId.slice(0, 8) })
+  }
+
+  hallStore.connect()
+}
+
+// -------- 修改用户名 --------
+const nameDialogVisible = ref(false)
+const newName = ref('')
+const nameUpdating = ref(false)
+
+function openNameDialog() {
+  newName.value = userStore.name || ''
+  nameDialogVisible.value = true
+}
+
+async function confirmUpdateName() {
+  const name = newName.value.trim()
+  if (!name) return
+  nameUpdating.value = true
+  try {
+    const res = await updateUserInfo(userStore.id, { name })
+    if (res.code === 0) {
+      userStore.setUserInfo({ name: res.data.name })
+      ElMessage.success('用户名修改成功')
+      nameDialogVisible.value = false
+    } else {
+      ElMessage.error(res.message || '修改失败')
+    }
+  } catch {
+    ElMessage.error('网络错误，请稍后重试')
+  } finally {
+    nameUpdating.value = false
+  }
+}
+
+// -------- 修改头像 --------
+const avatarDialogVisible = ref(false)
+const newAvatar = ref('')
+const avatarUpdating = ref(false)
+
+function openAvatarDialog() {
+  newAvatar.value = userStore.avatar || ''
+  avatarDialogVisible.value = true
+}
+
+async function confirmUpdateAvatar() {
+  avatarUpdating.value = true
+  try {
+    const res = await updateUserInfo(userStore.id, { avatar: newAvatar.value.trim() })
+    if (res.code === 0) {
+      userStore.setUserInfo({ avatar: res.data.avatar })
+      ElMessage.success('头像修改成功')
+      avatarDialogVisible.value = false
+    } else {
+      ElMessage.error(res.message || '修改失败')
+    }
+  } catch {
+    ElMessage.error('网络错误，请稍后重试')
+  } finally {
+    avatarUpdating.value = false
+  }
+}
+
 watch(() => hallStore.messages.length, scrollToBottom)
 
 onMounted(() => {
-  hallStore.connect()
+  userLogin()
 })
 
 onUnmounted(() => {
@@ -51,16 +136,62 @@ onUnmounted(() => {
 
     <!-- 用户信息 -->
     <div class="user-info flex items-center gap-10 p-t-8 p-b-12">
-      <el-avatar :size="40" :src="userStore.avatar || undefined">
-        {{ userStore.name?.charAt(0) || '?' }}
-      </el-avatar>
+      <!-- 头像（可点击修改） -->
+      <div class="avatar-wrap" @click="openAvatarDialog">
+        <el-avatar :size="40" :src="userStore.avatar || undefined">
+          {{ userStore.name?.charAt(0) || '?' }}
+        </el-avatar>
+        <div class="avatar-mask">
+          <el-icon><Camera /></el-icon>
+        </div>
+      </div>
       <div class="user-meta flex flex-col gap-4">
-        <div class="name font-14 font-medium">{{ userStore.name || '未登录' }}</div>
+        <div class="name-row flex items-center gap-6">
+          <span class="name font-14 font-medium">{{ userStore.name || '未登录' }}</span>
+          <el-icon class="edit-icon" @click="openNameDialog"><EditPen /></el-icon>
+        </div>
         <div class="level">
           <el-tag size="small" type="warning">Lv.{{ userStore.level }}</el-tag>
         </div>
       </div>
     </div>
+
+    <!-- 修改用户名弹窗 -->
+    <el-dialog v-model="nameDialogVisible" title="修改用户名" width="280px" :append-to-body="true">
+      <el-input
+        v-model="newName"
+        placeholder="请输入新用户名"
+        maxlength="20"
+        show-word-limit
+        clearable
+      />
+      <template #footer>
+        <el-button @click="nameDialogVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="nameUpdating"
+          :disabled="!newName.trim()"
+          @click="confirmUpdateName"
+          >确认</el-button
+        >
+      </template>
+    </el-dialog>
+
+    <!-- 修改头像弹窗 -->
+    <el-dialog v-model="avatarDialogVisible" title="修改头像" width="320px" :append-to-body="true">
+      <div class="avatar-preview-wrap flex flex-col items-center gap-12">
+        <el-avatar :size="64" :src="newAvatar || undefined">
+          {{ userStore.name?.charAt(0) || '?' }}
+        </el-avatar>
+        <el-input v-model="newAvatar" placeholder="粘贴头像图片 URL" clearable />
+      </div>
+      <template #footer>
+        <el-button @click="avatarDialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="avatarUpdating" @click="confirmUpdateAvatar"
+          >确认</el-button
+        >
+      </template>
+    </el-dialog>
 
     <!-- 公告区 -->
     <div class="space-notice p-y-10 font-12">
@@ -169,8 +300,44 @@ onUnmounted(() => {
 
 .user-info {
   border-bottom: 1px solid var(--el-border-color-lighter);
+
+  .avatar-wrap {
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    .avatar-mask {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    &:hover .avatar-mask {
+      opacity: 1;
+    }
+  }
+
   .name {
     color: var(--el-text-color-primary);
+  }
+
+  .edit-icon {
+    cursor: pointer;
+    color: var(--el-text-color-placeholder);
+    font-size: 13px;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--el-color-primary);
+    }
   }
 }
 

@@ -32,7 +32,7 @@ export class HallRoom extends Room<HallRoomState> {
     console.log("[HallRoom] 大厅创建完成");
   }
 
-  onJoin(client: Client, options: { name?: string; avatar?: string; level?: number }) {
+  onJoin(client: Client, options: { id?: string; name?: string; avatar?: string; level?: number }) {
     const user = new HallUser();
     user.sessionId = client.sessionId;
     user.name = options?.name || `游客_${client.sessionId.slice(0, 4)}`;
@@ -40,7 +40,7 @@ export class HallRoom extends Room<HallRoomState> {
     user.level = options?.level ?? 1;
     this.state.users.set(client.sessionId, user);
 
-    console.log(`[HallRoom] ${user.name} 进入大厅，当前人数: ${this.state.users.size}`);
+    console.log(`[HallRoom] 用户ID: ${options?.id || '未知'} | 昵称: ${user.name} 进入大厅`);
   }
 
   onLeave(client: Client, consented: boolean) {

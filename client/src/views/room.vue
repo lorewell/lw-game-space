@@ -1,14 +1,49 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import type { RoomState } from '@/types/common'
 import RoomBox from '@/components/RoomBox.vue'
+import { getRoomList } from '@/api/room'
 
-const rooms: RoomState[] = Array.from({ length: 9 }, (_, i) => ({
-  roomId: `room_${i + 1}`,
-  roomName: `房间 ${i + 1}`,
-  gameName: '五子棋',
-  users: [],
-  messages: []
-}))
+const router = useRouter()
+const rooms = ref<RoomState[]>([])
+
+async function fetchRooms() {
+  try {
+    const res = await getRoomList()
+    if (res.code === 0 && res.data.length > 0) {
+      rooms.value = res.data
+    } else {
+      // 后端暂无数据时使用默认占位房间
+      rooms.value = Array.from({ length: 9 }, (_, i) => ({
+        roomId: `room_${i + 1}`,
+        roomName: `房间 ${i + 1}`,
+        gameName: '五子棋',
+        users: [],
+        messages: []
+      }))
+    }
+  } catch {
+    rooms.value = Array.from({ length: 9 }, (_, i) => ({
+      roomId: `room_${i + 1}`,
+      roomName: `房间 ${i + 1}`,
+      gameName: '五子棋',
+      users: [],
+      messages: []
+    }))
+  }
+}
+
+function enterRoom(room: RoomState) {
+  if (room.users.length >= 2) {
+    ElMessage.warning('该房间已满')
+    return
+  }
+  router.push({ name: 'Game', params: { roomId: room.roomId } })
+}
+
+onMounted(fetchRooms)
 </script>
 
 <template>
@@ -19,6 +54,7 @@ const rooms: RoomState[] = Array.from({ length: 9 }, (_, i) => ({
         :key="room.roomId"
         class="room-cell"
         :style="{ '--i': index }"
+        @click="enterRoom(room)"
       >
         <RoomBox v-bind="room" />
       </div>
