@@ -159,6 +159,7 @@ onUnmounted(() => {
 // 仅保留依赖 Element Plus CSS 变量的样式
 
 .page-side {
+  width: 350px;
   border-left: 1px solid var(--el-border-color);
 }
 

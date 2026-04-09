@@ -10,13 +10,13 @@ import PageSide from './components/PageSide.vue'
       </RouterView>
     </el-main>
 
-    <PageSide class="w-20%" />
+    <PageSide />
   </el-container>
 </template>
 
 <style lang="scss" scoped>
 .page-content {
-  width: 80%;
+  width: calc(100% - 350px);
   padding: 24px;
   display: flex;
   flex-direction: column;
