@@ -14,7 +14,7 @@ export default defineConfig({
           l: ['left'],
           r: ['right'],
           x: ['left', 'right'],
-          y: ['top', 'bottom'],
+          y: ['top', 'bottom']
         }
         const prop = props[type]
         const value = `${d}px`
@@ -27,7 +27,7 @@ export default defineConfig({
           styles[`${prop}-${d}`] = value
         }
         return styles
-      },
+      }
     ],
     // width, height
     [/^(w|h)-(\d+)$/, ([, type, d]) => ({ [type === 'w' ? 'width' : 'height']: `${d}px` })],
@@ -35,11 +35,11 @@ export default defineConfig({
     [/^gap-(\d+)$/, ([, d]) => ({ gap: `${d}px` })],
     [
       /^gap-(x|y)-(\d+)$/,
-      ([, dir, d]) => ({ [`${dir === 'x' ? 'column' : 'row'}-gap`]: `${d}px` }),
+      ([, dir, d]) => ({ [`${dir === 'x' ? 'column' : 'row'}-gap`]: `${d}px` })
     ],
     // font size
     [/^font-(\d+)$/, ([, d]) => ({ 'font-size': `${d}px` })],
     // flex
-    [/^flex-(\d+)$/, ([, d]) => ({ flex: d })],
-  ],
+    [/^flex-(\d+)$/, ([, d]) => ({ flex: d })]
+  ]
 })
