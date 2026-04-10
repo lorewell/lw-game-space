@@ -12,101 +12,125 @@ const watchers = Math.max(0, props.users.length - 2)
 
 <template>
   <div
-    class="room-box"
+    class="room-box relative flex flex-col w-full h-full p-16 overflow-hidden cursor-pointer"
     :class="{
       'room-box--waiting': isWaiting,
       'room-box--ready': hasOnePlayer,
       'room-box--full': isFull
     }"
   >
-    <!-- 顶部装饰线 -->
-    <div class="room-decor-top">
-      <div class="decor-line"></div>
-      <div class="decor-diamond"></div>
-      <div class="decor-line"></div>
-    </div>
-
     <!-- 房间名称 -->
-    <div class="room-header">
-      <h3 class="room-name">{{ props.roomName }}</h3>
-      <div class="room-status">
-        <span v-if="isWaiting" class="status-badge status-badge--waiting">
-          <span class="status-dot"></span>
+    <div class="flex items-center justify-between m-b-12">
+      <h3 class="room-name font-16 font-semibold m-0">{{ props.roomName }}</h3>
+      <div>
+        <span
+          v-if="isWaiting"
+          class="status-badge status-badge--waiting inline-flex items-center gap-4 font-11 font-medium"
+        >
+          <span class="status-dot w-6 h-6"></span>
           等待中
         </span>
-        <span v-else-if="hasOnePlayer" class="status-badge status-badge--ready">
-          <span class="status-dot"></span>
+        <span
+          v-else-if="hasOnePlayer"
+          class="status-badge status-badge--ready inline-flex items-center gap-4 font-11 font-medium"
+        >
+          <span class="status-dot w-6 h-6"></span>
           准备中
         </span>
-        <span v-else class="status-badge status-badge--full">
-          <span class="status-dot"></span>
+        <span
+          v-else
+          class="status-badge status-badge--full inline-flex items-center gap-4 font-11 font-medium"
+        >
+          <span class="status-dot w-6 h-6"></span>
           对战中
         </span>
       </div>
     </div>
 
     <!-- 对战区域 -->
-    <div class="battle-area">
+    <div class="flex-1 flex items-center justify-between gap-8 p-y-8">
       <!-- 玩家1 -->
-      <div class="player-slot player-slot--left">
-        <div class="player-avatar-wrapper">
+      <div class="player-slot player-slot--left flex flex-col items-center gap-6 flex-1">
+        <div class="player-avatar-wrapper relative">
           <el-avatar :size="64" :src="props.users[0]?.avatar || undefined" class="player-avatar">
             {{ props.users[0]?.name?.charAt(0) || '?' }}
           </el-avatar>
-          <div class="avatar-ring ring--left"></div>
-          <div v-if="!props.users[0]" class="avatar-placeholder">
-            <span class="placeholder-icon">+</span>
+          <div class="avatar-ring ring--left absolute"></div>
+          <div
+            v-if="!props.users[0]"
+            class="avatar-placeholder absolute inset-0 flex items-center justify-center"
+          >
+            <span class="placeholder-icon font-28">+</span>
           </div>
         </div>
-        <span class="player-name">{{ props.users[0]?.name || '等待加入' }}</span>
-        <span v-if="props.users[0]" class="player-level">
+        <span class="player-name font-13 font-medium text-center whitespace-nowrap">
+          {{ props.users[0]?.name || '等待加入' }}
+        </span>
+        <span v-if="props.users[0]" class="player-level font-10 p-y-2 p-x-6">
           Lv.{{ props.users[0]?.level || 1 }}
         </span>
       </div>
 
       <!-- VS 区域 -->
-      <div class="vs-container">
+      <div class="vs-container flex items-center gap-4 p-x-4">
         <div class="vs-line vs-line--left"></div>
-        <div class="vs-badge">
-          <span class="vs-text">VS</span>
+        <div class="vs-badge flex items-center justify-center">
+          <span class="vs-text font-bold">VS</span>
         </div>
         <div class="vs-line vs-line--right"></div>
       </div>
 
       <!-- 玩家2 -->
-      <div class="player-slot player-slot--right">
-        <div class="player-avatar-wrapper">
+      <div class="player-slot player-slot--right flex flex-col items-center gap-6 flex-1">
+        <div class="player-avatar-wrapper relative">
           <el-avatar :size="64" :src="props.users[1]?.avatar || undefined" class="player-avatar">
             {{ props.users[1]?.name?.charAt(0) || '?' }}
           </el-avatar>
-          <div class="avatar-ring ring--right"></div>
-          <div v-if="!props.users[1]" class="avatar-placeholder">
-            <span class="placeholder-icon">+</span>
+          <div class="avatar-ring ring--right absolute"></div>
+          <div
+            v-if="!props.users[1]"
+            class="avatar-placeholder absolute inset-0 flex items-center justify-center"
+          >
+            <span class="placeholder-icon font-28">+</span>
           </div>
         </div>
-        <span class="player-name">{{ props.users[1]?.name || '等待加入' }}</span>
-        <span v-if="props.users[1]" class="player-level">
+        <span class="player-name font-13 font-medium text-center whitespace-nowrap">
+          {{ props.users[1]?.name || '等待加入' }}
+        </span>
+        <span v-if="props.users[1]" class="player-level font-10 p-y-2 p-x-6">
           Lv.{{ props.users[1]?.level || 1 }}
         </span>
       </div>
     </div>
 
     <!-- 底部信息 -->
-    <div class="room-footer">
-      <div class="footer-left">
-        <span class="watcher-count" v-if="watchers > 0">
-          <svg class="watcher-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
+    <div class="flex items-center justify-between m-t-8 p-t-8">
+      <div>
+        <span v-if="watchers > 0" class="watcher-count inline-flex items-center gap-4 font-12">
+          <svg
+            class="w-14 h-14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
           </svg>
           {{ watchers }} 观众
         </span>
       </div>
-      <div class="footer-right">
-        <span class="game-tag">
-          <svg class="game-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="6" width="20" height="12" rx="2"/>
-            <path d="M6 12h4M14 12h4"/>
+      <div>
+        <span class="game-tag inline-flex items-center gap-6 p-y-4 p-x-10 font-12 font-medium">
+          <svg
+            class="w-14 h-14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="2" y="6" width="20" height="12" rx="2" />
+            <path d="M6 12h4M14 12h4" />
           </svg>
           {{ props.gameName || '暂无游戏' }}
         </span>
@@ -114,7 +138,7 @@ const watchers = Math.max(0, props.users.length - 2)
     </div>
 
     <!-- 底部装饰 -->
-    <div class="room-decor-bottom">
+    <div class="m-t-auto p-t-8">
       <div class="decor-line"></div>
     </div>
   </div>
@@ -122,24 +146,11 @@ const watchers = Math.max(0, props.users.length - 2)
 
 <style scoped lang="scss">
 .room-box {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  padding: 16px;
-  background: linear-gradient(
-    145deg,
-    var(--bg-card) 0%,
-    var(--bg-elevated) 100%
-  );
+  background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  cursor: pointer;
   transition: all var(--transition-normal);
 
-  // 状态光效
   &::before {
     content: '';
     position: absolute;
@@ -155,7 +166,7 @@ const watchers = Math.max(0, props.users.length - 2)
   &:hover {
     border-color: var(--accent-primary);
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 
+    box-shadow:
       var(--shadow-lg),
       0 0 30px rgba(124, 58, 237, 0.15);
 
@@ -168,9 +179,8 @@ const watchers = Math.max(0, props.users.length - 2)
     }
   }
 
-  // 状态变体
-  &--waiting {
-    .vs-text { color: var(--text-muted); }
+  &--waiting .vs-text {
+    color: var(--text-muted);
   }
 
   &--ready {
@@ -193,89 +203,35 @@ const watchers = Math.max(0, props.users.length - 2)
   }
 }
 
-// 装饰线
-.room-decor-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 12px;
-
-  .decor-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--border-light),
-      transparent
-    );
-  }
-
-  .decor-diamond {
-    width: 8px;
-    height: 8px;
-    background: var(--accent-primary);
-    transform: rotate(45deg);
-    box-shadow: 0 0 8px var(--accent-glow);
-  }
-}
-
-.room-decor-bottom {
-  margin-top: auto;
-  padding-top: 12px;
-
-  .decor-line {
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--border-light),
-      transparent
-    );
-  }
-}
-
-// 房间头部
-.room-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+.decor-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
 }
 
 .room-name {
-  font-size: 16px;
-  font-weight: 600;
   color: var(--text);
-  margin: 0;
 }
 
 .status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
 
   .status-dot {
-    width: 6px;
-    height: 6px;
     border-radius: 50%;
   }
 
   &--waiting {
     background: rgba(90, 90, 110, 0.3);
     color: var(--text-muted);
-    .status-dot { background: var(--text-muted); }
+    .status-dot {
+      background: var(--text-muted);
+    }
   }
 
   &--ready {
     background: rgba(16, 185, 129, 0.15);
     color: var(--success);
-    .status-dot { 
+    .status-dot {
       background: var(--success);
       animation: pulse 1.5s ease-in-out infinite;
     }
@@ -284,43 +240,29 @@ const watchers = Math.max(0, props.users.length - 2)
   &--full {
     background: rgba(239, 68, 68, 0.15);
     color: var(--error);
-    .status-dot { 
+    .status-dot {
       background: var(--error);
       animation: pulse 1s ease-in-out infinite;
     }
   }
 }
 
-// 对战区域
-.battle-area {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 0;
-}
-
-.player-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-
-  &--left {
-    .player-avatar { border-color: var(--player-left); }
-    .avatar-ring { border-color: var(--player-left); }
+.player-slot--left {
+  .player-avatar {
+    border-color: var(--player-left);
   }
-
-  &--right {
-    .player-avatar { border-color: var(--player-right); }
-    .avatar-ring { border-color: var(--player-right); }
+  .avatar-ring {
+    border-color: var(--player-left);
   }
 }
 
-.player-avatar-wrapper {
-  position: relative;
+.player-slot--right {
+  .player-avatar {
+    border-color: var(--player-right);
+  }
+  .avatar-ring {
+    border-color: var(--player-right);
+  }
 }
 
 .player-avatar {
@@ -333,7 +275,6 @@ const watchers = Math.max(0, props.users.length - 2)
 }
 
 .avatar-ring {
-  position: absolute;
   top: -6px;
   left: -6px;
   right: -6px;
@@ -344,73 +285,42 @@ const watchers = Math.max(0, props.users.length - 2)
   animation: spin 10s linear infinite;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 .avatar-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border-radius: 50%;
   border: 3px dashed var(--border-light);
   background: rgba(0, 0, 0, 0.2);
+}
 
-  .placeholder-icon {
-    font-size: 28px;
-    color: var(--text-muted);
-    font-weight: 300;
-  }
+.placeholder-icon {
+  color: var(--text-muted);
+  font-weight: 300;
 }
 
 .player-name {
-  font-size: 13px;
-  font-weight: 500;
   color: var(--text);
   max-width: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
 }
 
 .player-level {
-  font-size: 10px;
   color: var(--warning);
   background: rgba(245, 158, 11, 0.1);
-  padding: 2px 6px;
   border-radius: 8px;
-}
-
-// VS 容器
-.vs-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 4px;
 }
 
 .vs-line {
   width: 20px;
   height: 2px;
-  background: var(--border-light);
-
   &--left {
     background: linear-gradient(90deg, transparent, var(--vs-color));
   }
-
   &--right {
     background: linear-gradient(90deg, var(--vs-color), transparent);
   }
 }
 
 .vs-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -421,63 +331,85 @@ const watchers = Math.max(0, props.users.length - 2)
 
 .vs-text {
   font-size: 14px;
-  font-weight: 700;
   color: var(--vs-color);
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
-}
-
-// 底部信息
-.room-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
 }
 
 .watcher-count {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
   color: var(--text-secondary);
+}
 
-  .watcher-icon {
-    width: 14px;
-    height: 14px;
-  }
+.room-footer-border {
+  border-top: 1px solid var(--border);
 }
 
 .game-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
   background: var(--accent-gradient);
   border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 500;
   color: white;
-
-  .game-icon {
-    width: 14px;
-    height: 14px;
-  }
 }
 
-// 动画
 @keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239, 68, 68, 0.2);
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px rgba(239, 68, 68, 0.4),
+      0 0 20px rgba(239, 68, 68, 0.2);
   }
   50% {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), 0 0 40px rgba(239, 68, 68, 0.3);
+    box-shadow:
+      0 0 20px rgba(239, 68, 68, 0.6),
+      0 0 40px rgba(239, 68, 68, 0.3);
   }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 小屏幕：头像和 VS 缩小
+@media (max-width: 900px) {
+  .player-avatar-wrapper :deep(.el-avatar) {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 18px !important;
+  }
+
+  .avatar-ring {
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+  }
+
+  .vs-badge {
+    width: 32px;
+    height: 32px;
+  }
+
+  .vs-text {
+    font-size: 10px;
+  }
+
+  .vs-line {
+    width: 12px;
+  }
 }
 </style>
