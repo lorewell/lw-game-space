@@ -1,10 +1,10 @@
 ﻿<script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted, watch } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useSystemStore } from '@/stores/system'
 import { useHallStore } from '@/stores/hall'
-import { getUserInfo, updateUserInfo } from '@/api/user'
+import { getUserInfo } from '@/api/user'
+import UserInfoDialog from '@/components/UserInfoDialog.vue'
 
 const userStore = useUserStore()
 const systemStore = useSystemStore()
@@ -58,62 +58,11 @@ async function userLogin() {
   hallStore.connect()
 }
 
-// 修改用户名
-const nameDialogVisible = ref(false)
-const newName = ref('')
-const nameUpdating = ref(false)
+// 编辑用户信息
+const userInfoDialogVisible = ref(false)
 
-function openNameDialog() {
-  newName.value = userStore.name || ''
-  nameDialogVisible.value = true
-}
-
-async function confirmUpdateName() {
-  const name = newName.value.trim()
-  if (!name) return
-  nameUpdating.value = true
-  try {
-    const res = await updateUserInfo(userStore.id, { name })
-    if (res.code === 0) {
-      userStore.setUserInfo({ name: res.data.name })
-      ElMessage.success('用户名修改成功')
-      nameDialogVisible.value = false
-    } else {
-      ElMessage.error(res.message || '修改失败')
-    }
-  } catch {
-    ElMessage.error('网络错误，请稍后重试')
-  } finally {
-    nameUpdating.value = false
-  }
-}
-
-// 修改头像
-const avatarDialogVisible = ref(false)
-const newAvatar = ref('')
-const avatarUpdating = ref(false)
-
-function openAvatarDialog() {
-  newAvatar.value = userStore.avatar || ''
-  avatarDialogVisible.value = true
-}
-
-async function confirmUpdateAvatar() {
-  avatarUpdating.value = true
-  try {
-    const res = await updateUserInfo(userStore.id, { avatar: newAvatar.value.trim() })
-    if (res.code === 0) {
-      userStore.setUserInfo({ avatar: res.data.avatar })
-      ElMessage.success('头像修改成功')
-      avatarDialogVisible.value = false
-    } else {
-      ElMessage.error(res.message || '修改失败')
-    }
-  } catch {
-    ElMessage.error('网络错误，请稍后重试')
-  } finally {
-    avatarUpdating.value = false
-  }
+function openUserInfoDialog() {
+  userInfoDialogVisible.value = true
 }
 
 watch(() => hallStore.messages.length, scrollToBottom)
@@ -129,7 +78,7 @@ onUnmounted(() => {
 
 <template>
   <div class="page-side h-full flex flex-col w-340 border-l border-[var(--border)]">
-    <!-- 顶部标题 (固定) -->
+    <!-- 顶部区域(固定) -->
     <div class="side-header shrink-0 p-t-20 p-x-16 p-b-16 text-center">
       <div class="header-decoration flex items-center justify-center gap-12 m-b-12">
         <div class="deco-line flex-1 h-1"></div>
@@ -138,68 +87,59 @@ onUnmounted(() => {
         </div>
         <div class="deco-line flex-1 h-1"></div>
       </div>
-      <h2 class="side-title font-18 font-600 m-0 m-b-8">游戏大厅</h2>
-      <div
-        class="online-indicator inline-flex items-center gap-6 p-y-4 p-x-12 font-11 border border-[var(--border)]"
-        :class="{ connected: hallStore.connected }"
-      >
-        <span class="indicator-dot w-6 h-6"></span>
-        <span class="indicator-text">{{ hallStore.connected ? '在线' : '连接中' }}</span>
+      <h2 class="side-title font-18 font-bold m-0 m-b-16">游戏大厅</h2>
+
+      <!-- 用户信息卡片 -->
+      <div class="user-card relative p-12 border border-[var(--border)] overflow-hidden text-left">
+        <div class="card-glow absolute w-100 h-100 pointer-events-none opacity-10"></div>
+        <div class="user-main flex items-center gap-12 relative z-1">
+          <!-- 头像 -->
+          <div class="avatar-container relative cursor-pointer" @click="openUserInfoDialog">
+            <el-avatar
+              :size="48"
+              :src="userStore.avatar || undefined"
+              class="user-avatar border-2 border-[var(--border)] transition-all-300"
+            >
+              {{ userStore.name?.charAt(0) || '?' }}
+            </el-avatar>
+            <div
+              class="avatar-level absolute p-y-2 p-x-6 font-10 font-bold border border-[var(--bg-card)]"
+            >
+              <span>Lv.{{ userStore.level }}</span>
+            </div>
+            <div
+              class="avatar-overlay absolute inset-0 flex items-center justify-center opacity-0 transition-opacity-300"
+            >
+              <el-icon :size="16" color="white"><Camera /></el-icon>
+            </div>
+          </div>
+
+          <!-- 用户信息 -->
+          <div class="user-info flex-1 min-w-0">
+            <div class="user-name-row flex items-center gap-8 m-b-4">
+              <span class="user-name font-14 font-bold truncate">{{
+                userStore.name || '未登录'
+              }}</span>
+              <button
+                class="edit-btn p-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
+                @click="openUserInfoDialog"
+                title="编辑用户信息"
+              >
+                <el-icon :size="13"><Edit /></el-icon>
+              </button>
+            </div>
+            <div class="user-id font-11">ID: {{ userStore.id?.slice(0, 12) }}...</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 中间滚动区域 -->
     <div v-scrollbar class="flex-1 min-h-0">
       <div class="side-content p-b-16">
-        <!-- 用户信息 -->
-        <div
-          class="user-card relative m-x-16 m-b-20 p-16 border border-[var(--border)] overflow-hidden"
-        >
-          <div class="card-glow absolute w-100 h-100 pointer-events-none opacity-10"></div>
-          <div class="user-main flex items-center gap-16 relative z-1">
-            <!-- 头像 -->
-            <div class="avatar-container relative cursor-pointer" @click="openAvatarDialog">
-              <el-avatar
-                :size="56"
-                :src="userStore.avatar || undefined"
-                class="user-avatar border-2 border-[var(--border)] transition-all-300"
-              >
-                {{ userStore.name?.charAt(0) || '?' }}
-              </el-avatar>
-              <div
-                class="avatar-level absolute p-y-2 p-x-6 font-10 font-bold border border-[var(--bg-card)]"
-              >
-                <span>Lv.{{ userStore.level }}</span>
-              </div>
-              <div
-                class="avatar-overlay absolute inset-0 flex items-center justify-center opacity-0 transition-opacity-300"
-              >
-                <el-icon :size="20" color="white"><Camera /></el-icon>
-              </div>
-            </div>
-
-            <!-- 用户信息 -->
-            <div class="user-info flex-1 min-w-0">
-              <div class="user-name-row flex items-center gap-8 m-b-4">
-                <span class="user-name font-15 font-600 truncate">{{
-                  userStore.name || '未登录'
-                }}</span>
-                <button
-                  class="edit-btn p-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
-                  @click="openNameDialog"
-                  title="修改名称"
-                >
-                  <el-icon :size="14"><Edit /></el-icon>
-                </button>
-              </div>
-              <div class="user-id font-11">ID: {{ userStore.id?.slice(0, 12) }}...</div>
-            </div>
-          </div>
-        </div>
-
         <!-- 公告区 -->
         <div class="notice-section m-b-24">
-          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-600">
+          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-bold">
             <el-icon class="section-icon" :size="16"><Bell /></el-icon>
             <span>系统公告</span>
           </div>
@@ -231,7 +171,7 @@ onUnmounted(() => {
 
         <!-- 在线玩家 -->
         <div class="online-section m-b-24">
-          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-600">
+          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-bold">
             <el-icon class="section-icon" :size="16"><User /></el-icon>
             <span>在线玩家</span>
             <span class="online-count m-l-auto font-10 p-y-2 p-x-8">{{
@@ -270,7 +210,7 @@ onUnmounted(() => {
 
         <!-- 聊天区 -->
         <div class="chat-section flex-1 flex flex-col min-h-200 m-b-24">
-          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-600">
+          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-bold">
             <el-icon class="section-icon" :size="16"><ChatDotRound /></el-icon>
             <span>大厅聊天</span>
           </div>
@@ -358,64 +298,8 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- 修改用户名弹窗 -->
-    <el-dialog
-      v-model="nameDialogVisible"
-      title="修改用户名"
-      width="300px"
-      :append-to-body="true"
-      class="game-dialog"
-    >
-      <div class="dialog-content flex flex-col gap-16">
-        <el-input
-          v-model="newName"
-          placeholder="请输入新用户名"
-          maxlength="20"
-          show-word-limit
-          clearable
-          size="large"
-        />
-      </div>
-      <template #footer>
-        <el-button @click="nameDialogVisible = false" class="dialog-btn font-500">取消</el-button>
-        <el-button
-          type="primary"
-          :loading="nameUpdating"
-          :disabled="!newName.trim()"
-          @click="confirmUpdateName"
-          class="dialog-btn dialog-btn--primary font-500"
-        >
-          确认修改
-        </el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 修改头像弹窗 -->
-    <el-dialog
-      v-model="avatarDialogVisible"
-      title="修改头像"
-      width="340px"
-      :append-to-body="true"
-      class="game-dialog"
-    >
-      <div class="dialog-content avatar-preview flex flex-col gap-16 items-center">
-        <el-avatar :size="80" :src="newAvatar || undefined">
-          {{ userStore.name?.charAt(0) || '?' }}
-        </el-avatar>
-        <el-input v-model="newAvatar" placeholder="粘贴头像图片 URL" clearable size="large" />
-      </div>
-      <template #footer>
-        <el-button @click="avatarDialogVisible = false" class="dialog-btn font-500">取消</el-button>
-        <el-button
-          type="primary"
-          :loading="avatarUpdating"
-          @click="confirmUpdateAvatar"
-          class="dialog-btn dialog-btn--primary font-500"
-        >
-          确认修改
-        </el-button>
-      </template>
-    </el-dialog>
+    <!-- 编辑用户信息弹窗 -->
+    <UserInfoDialog v-model="userInfoDialogVisible" />
   </div>
 </template>
 
