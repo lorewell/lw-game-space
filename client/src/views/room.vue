@@ -49,24 +49,13 @@ onMounted(fetchRooms)
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col p-y-20 p-x-32 overflow-hidden">
+  <div class="w-full h-full flex flex-col p-y-20 overflow-hidden">
     <!-- 页面标题 -->
-    <header class="view-header flex items-center justify-between p-b-8 m-b-8 shrink-0">
+    <header class="view-header flex items-center justify-between p-x-32 p-b-8 m-b-8 shrink-0">
       <div class="flex flex-col gap-4">
         <h1 class="page-title flex items-center gap-10 font-22 font-bold m-0">
           <span class="title-icon flex items-center justify-center w-32 h-32 shrink-0">
-            <svg
-              class="w-18 h-18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="3" y="3" width="7" height="7" />
-              <rect x="14" y="3" width="7" height="7" />
-              <rect x="14" y="14" width="7" height="7" />
-              <rect x="3" y="14" width="7" height="7" />
-            </svg>
+            <el-icon :size="18" color="white"><Menu /></el-icon>
           </span>
           游戏房间
         </h1>
@@ -97,87 +86,85 @@ onMounted(fetchRooms)
     </header>
 
     <!-- 房间网格 -->
-    <main class="room-grid flex-1 min-h-0" :class="{ 'is-loading': loading }">
-      <div
-        v-for="(room, index) in rooms"
-        :key="room.roomId"
-        class="room-cell min-w-0 min-h-0 cursor-pointer"
-        :style="{ '--i': index }"
-        @click="enterRoom(room)"
-      >
-        <RoomBox v-bind="room" />
-      </div>
-    </main>
+    <div v-scrollbar class="flex-1 min-h-0 p-x-32">
+      <main class="room-grid" :class="{ 'is-loading': loading }">
+        <div
+          v-for="(room, index) in rooms"
+          :key="room.roomId"
+          class="room-cell min-w-0 cursor-pointer"
+          :style="{ '--i': index }"
+          @click="enterRoom(room)"
+        >
+          <RoomBox v-bind="room" />
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-// 页面头部
 .view-header {
   border-bottom: 1px solid var(--border);
-}
 
-.page-title {
-  color: var(--text);
-}
+  .page-title {
+    color: var(--text);
 
-.title-icon {
-  background: var(--accent-gradient);
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 15px var(--accent-glow);
+    .title-icon {
+      background: var(--accent-gradient);
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 15px var(--accent-glow);
 
-  svg {
-    color: white;
+      svg {
+        color: white;
+      }
+    }
+  }
+
+  .page-subtitle {
+    color: var(--text-secondary);
+  }
+
+  .header-stats {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+
+    .stat-value {
+      color: var(--text);
+      font-family: var(--font-mono);
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+    }
   }
 }
 
-.page-subtitle {
-  color: var(--text-secondary);
-}
-
-// 统计信息
-.header-stats {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-}
-
-.stat-value {
-  color: var(--text);
-  font-family: var(--font-mono);
-}
-
-.stat-label {
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
-}
-
-.stat-divider {
-  width: 1px;
-  height: 24px;
-  background: var(--border);
-}
-
-// 房间网格
 .room-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
   gap: 20px;
   transition: opacity var(--transition-normal);
 
   &.is-loading {
     opacity: 0;
   }
-}
 
-.room-cell {
-  animation: cellIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(var(--i) * 50ms);
-  transition: transform var(--transition-normal);
+  .room-cell {
+    animation: cellIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i) * 50ms);
+    transition: transform var(--transition-normal);
 
-  &:hover {
-    z-index: 1;
+    &:hover {
+      z-index: 1;
+    }
   }
 }
 
@@ -200,25 +187,14 @@ onMounted(fetchRooms)
     gap: 16px;
   }
 
-  .header-stats {
-    width: 100%;
-    justify-content: space-around;
-  }
-
-  .page-title {
-    font-size: 20px;
-  }
-
-  .page-subtitle {
-    padding-left: 0;
+  .room-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .room-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-    gap: 16px;
+    grid-template-columns: 1fr;
   }
 }
 </style>

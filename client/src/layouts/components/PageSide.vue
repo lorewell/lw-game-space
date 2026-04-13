@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
@@ -128,192 +128,185 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="page-side h-full flex flex-col">
-    <!-- 顶部标题 -->
-    <div class="side-header">
-      <div class="header-decoration">
-        <div class="deco-line"></div>
-        <div class="deco-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
+  <div class="page-side h-full flex flex-col w-340 border-l border-[var(--border)]">
+    <!-- 顶部标题 (固定) -->
+    <div class="side-header shrink-0 p-t-20 p-x-16 p-b-16 text-center">
+      <div class="header-decoration flex items-center justify-center gap-12 m-b-12">
+        <div class="deco-line flex-1 h-1"></div>
+        <div class="deco-icon w-24 h-24 flex items-center justify-center">
+          <el-icon :size="20"><Star /></el-icon>
         </div>
-        <div class="deco-line"></div>
+        <div class="deco-line flex-1 h-1"></div>
       </div>
-      <h2 class="side-title">游戏大厅</h2>
-      <div class="online-indicator" :class="{ connected: hallStore.connected }">
-        <span class="indicator-dot"></span>
+      <h2 class="side-title font-18 font-600 m-0 m-b-8">游戏大厅</h2>
+      <div
+        class="online-indicator inline-flex items-center gap-6 p-y-4 p-x-12 font-11 border border-[var(--border)]"
+        :class="{ connected: hallStore.connected }"
+      >
+        <span class="indicator-dot w-6 h-6"></span>
         <span class="indicator-text">{{ hallStore.connected ? '在线' : '连接中' }}</span>
       </div>
     </div>
 
-    <!-- 用户信息 -->
-    <div class="user-card">
-      <div class="card-glow"></div>
-      <div class="user-main">
-        <!-- 头像 -->
-        <div class="avatar-container" @click="openAvatarDialog">
-          <el-avatar :size="56" :src="userStore.avatar || undefined" class="user-avatar">
-            {{ userStore.name?.charAt(0) || '?' }}
-          </el-avatar>
-          <div class="avatar-level">
-            <span>Lv.{{ userStore.level }}</span>
-          </div>
-          <div class="avatar-overlay">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
-          </div>
-        </div>
-
+    <!-- 中间滚动区域 -->
+    <div v-scrollbar class="flex-1 min-h-0">
+      <div class="side-content p-b-16">
         <!-- 用户信息 -->
-        <div class="user-info">
-          <div class="user-name-row">
-            <span class="user-name">{{ userStore.name || '未登录' }}</span>
-            <button class="edit-btn" @click="openNameDialog" title="修改名称">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
-            </button>
+        <div
+          class="user-card relative m-x-16 m-b-20 p-16 border border-[var(--border)] overflow-hidden"
+        >
+          <div class="card-glow absolute w-100 h-100 pointer-events-none opacity-10"></div>
+          <div class="user-main flex items-center gap-16 relative z-1">
+            <!-- 头像 -->
+            <div class="avatar-container relative cursor-pointer" @click="openAvatarDialog">
+              <el-avatar
+                :size="56"
+                :src="userStore.avatar || undefined"
+                class="user-avatar border-2 border-[var(--border)] transition-all-300"
+              >
+                {{ userStore.name?.charAt(0) || '?' }}
+              </el-avatar>
+              <div
+                class="avatar-level absolute p-y-2 p-x-6 font-10 font-bold border border-[var(--bg-card)]"
+              >
+                <span>Lv.{{ userStore.level }}</span>
+              </div>
+              <div
+                class="avatar-overlay absolute inset-0 flex items-center justify-center opacity-0 transition-opacity-300"
+              >
+                <el-icon :size="20" color="white"><Camera /></el-icon>
+              </div>
+            </div>
+
+            <!-- 用户信息 -->
+            <div class="user-info flex-1 min-w-0">
+              <div class="user-name-row flex items-center gap-8 m-b-4">
+                <span class="user-name font-15 font-600 truncate">{{
+                  userStore.name || '未登录'
+                }}</span>
+                <button
+                  class="edit-btn p-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
+                  @click="openNameDialog"
+                  title="修改名称"
+                >
+                  <el-icon :size="14"><Edit /></el-icon>
+                </button>
+              </div>
+              <div class="user-id font-11">ID: {{ userStore.id?.slice(0, 12) }}...</div>
+            </div>
           </div>
-          <div class="user-id">ID: {{ userStore.id?.slice(0, 12) }}...</div>
+        </div>
+
+        <!-- 公告区 -->
+        <div class="notice-section m-b-24">
+          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-600">
+            <el-icon class="section-icon" :size="16"><Bell /></el-icon>
+            <span>系统公告</span>
+          </div>
+          <div class="notice-content m-x-16 flex flex-col gap-10">
+            <div
+              v-if="systemStore.newSpaceNotice"
+              class="notice-item notice-item--highlight flex items-center gap-10 p-y-10 p-x-12 font-12 border border-[var(--border)] transition-all-300"
+            >
+              <span class="notice-tag p-y-2 p-x-6 font-10 font-bold shrink-0">新</span>
+              <span>{{ systemStore.newSpaceNotice }}</span>
+            </div>
+            <div
+              v-if="systemStore.newUpdateNotice"
+              class="notice-item flex items-center gap-10 p-y-10 p-x-12 font-12 border border-[var(--border)] transition-all-300"
+            >
+              <span class="notice-tag notice-tag--update p-y-2 p-x-6 font-10 font-bold shrink-0"
+                >更</span
+              >
+              <span>{{ systemStore.newUpdateNotice }}</span>
+            </div>
+            <div
+              v-if="!systemStore.newSpaceNotice && !systemStore.newUpdateNotice"
+              class="notice-empty p-20 text-center font-12 border border-dashed border-[var(--border)]"
+            >
+              暂无公告
+            </div>
+          </div>
+        </div>
+
+        <!-- 在线玩家 -->
+        <div class="online-section m-b-24">
+          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-600">
+            <el-icon class="section-icon" :size="16"><User /></el-icon>
+            <span>在线玩家</span>
+            <span class="online-count m-l-auto font-10 p-y-2 p-x-8">{{
+              hallStore.onlineUsers.length
+            }}</span>
+          </div>
+          <div class="online-list p-x-16 flex flex-wrap gap-8">
+            <div
+              v-for="user in hallStore.onlineUsers.slice(0, 8)"
+              :key="user.sessionId"
+              class="online-item flex items-center gap-8 p-y-6 p-x-10 border border-[var(--border)] transition-all-200"
+            >
+              <el-avatar :size="28" :src="user.avatar || undefined" class="online-avatar">
+                {{ user.name?.charAt(0) }}
+              </el-avatar>
+              <span class="online-name font-11 truncate">{{ user.name }}</span>
+              <el-tag size="small" type="warning" class="online-level border-none h-18 font-9">
+                Lv.{{ user.level }}
+              </el-tag>
+            </div>
+            <div
+              v-if="hallStore.onlineUsers.length === 0"
+              class="empty-state flex-1 flex flex-col items-center justify-center p-20 gap-12"
+            >
+              <el-icon class="empty-icon opacity-50" :size="32"><ChatDotRound /></el-icon>
+              <span class="font-12">暂无玩家在线</span>
+            </div>
+            <div
+              v-if="hallStore.onlineUsers.length > 8"
+              class="more-users w-full text-center font-11 p-8 text-[var(--text-muted)]"
+            >
+              还有 {{ hallStore.onlineUsers.length - 8 }} 位玩家...
+            </div>
+          </div>
+        </div>
+
+        <!-- 聊天区 -->
+        <div class="chat-section flex-1 flex flex-col min-h-200 m-b-24">
+          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-600">
+            <el-icon class="section-icon" :size="16"><ChatDotRound /></el-icon>
+            <span>大厅聊天</span>
+          </div>
+
+          <!-- 消息列表 -->
+          <div
+            class="message-list flex-1 p-x-16 flex flex-col gap-8 overflow-y-auto"
+            ref="messageListRef"
+          >
+            <div
+              v-for="(msg, index) in hallStore.messages"
+              :key="index"
+              class="message-item p-y-6 p-x-10 font-12 border border-[var(--border)] break-all"
+            >
+              <span class="message-name font-bold color-[var(--accent-primary)]">{{
+                msg.userName
+              }}</span>
+              <span class="message-colon color-[var(--text-muted)] m-x-2">:</span>
+              <span class="message-content color-[var(--text)]">{{ msg.content }}</span>
+            </div>
+            <div
+              v-if="hallStore.messages.length === 0"
+              class="empty-state flex-1 flex flex-col items-center justify-center p-20 gap-12"
+            >
+              <el-icon class="empty-icon opacity-50" :size="32"><ChatDotRound /></el-icon>
+              <span class="font-12">暂无消息，快来聊天吧~</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 修改用户名弹窗 -->
-    <el-dialog v-model="nameDialogVisible" title="修改用户名" width="300px" :append-to-body="true" class="game-dialog">
-      <div class="dialog-content">
-        <el-input
-          v-model="newName"
-          placeholder="请输入新用户名"
-          maxlength="20"
-          show-word-limit
-          clearable
-          size="large"
-        />
-      </div>
-      <template #footer>
-        <el-button @click="nameDialogVisible = false" class="dialog-btn">取消</el-button>
-        <el-button type="primary" :loading="nameUpdating" :disabled="!newName.trim()" @click="confirmUpdateName" class="dialog-btn dialog-btn--primary">
-          确认修改
-        </el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 修改头像弹窗 -->
-    <el-dialog v-model="avatarDialogVisible" title="修改头像" width="340px" :append-to-body="true" class="game-dialog">
-      <div class="dialog-content avatar-preview">
-        <el-avatar :size="80" :src="newAvatar || undefined">
-          {{ userStore.name?.charAt(0) || '?' }}
-        </el-avatar>
-        <el-input v-model="newAvatar" placeholder="粘贴头像图片 URL" clearable size="large" />
-      </div>
-      <template #footer>
-        <el-button @click="avatarDialogVisible = false" class="dialog-btn">取消</el-button>
-        <el-button type="primary" :loading="avatarUpdating" @click="confirmUpdateAvatar" class="dialog-btn dialog-btn--primary">
-          确认修改
-        </el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 公告区 -->
-    <div class="notice-section">
-      <div class="section-header">
-        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        <span>系统公告</span>
-      </div>
-      <div class="notice-content">
-        <div v-if="systemStore.newSpaceNotice" class="notice-item notice-item--highlight">
-          <span class="notice-tag">新</span>
-          <span>{{ systemStore.newSpaceNotice }}</span>
-        </div>
-        <div v-if="systemStore.newUpdateNotice" class="notice-item">
-          <span class="notice-tag notice-tag--update">更</span>
-          <span>{{ systemStore.newUpdateNotice }}</span>
-        </div>
-        <div v-if="!systemStore.newSpaceNotice && !systemStore.newUpdateNotice" class="notice-empty">
-          暂无公告
-        </div>
-      </div>
-    </div>
-
-    <!-- 在线玩家 -->
-    <div class="online-section">
-      <div class="section-header">
-        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-        <span>在线玩家</span>
-        <span class="online-count">{{ hallStore.onlineUsers.length }}</span>
-      </div>
-      <div class="online-list">
-        <div
-          v-for="user in hallStore.onlineUsers.slice(0, 8)"
-          :key="user.sessionId"
-          class="online-item"
-        >
-          <el-avatar :size="28" :src="user.avatar || undefined" class="online-avatar">
-            {{ user.name?.charAt(0) }}
-          </el-avatar>
-          <span class="online-name">{{ user.name }}</span>
-          <el-tag size="small" type="warning" class="online-level">
-            Lv.{{ user.level }}
-          </el-tag>
-        </div>
-        <div v-if="hallStore.onlineUsers.length === 0" class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M8 15s1.5 2 4 2 4-2 4-2"/>
-            <line x1="9" y1="9" x2="9.01" y2="9"/>
-            <line x1="15" y1="9" x2="15.01" y2="9"/>
-          </svg>
-          <span>暂无玩家在线</span>
-        </div>
-        <div v-if="hallStore.onlineUsers.length > 8" class="more-users">
-          还有 {{ hallStore.onlineUsers.length - 8 }} 位玩家...
-        </div>
-      </div>
-    </div>
-
-    <!-- 消息区域 -->
-    <div class="chat-section">
-      <div class="section-header">
-        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-        <span>大厅聊天</span>
-      </div>
-
-      <!-- 消息列表 -->
-      <div class="message-list" ref="messageListRef">
-        <div
-          v-for="(msg, index) in hallStore.messages"
-          :key="index"
-          class="message-item"
-        >
-          <span class="message-name">{{ msg.userName }}</span>
-          <span class="message-colon">:</span>
-          <span class="message-content">{{ msg.content }}</span>
-        </div>
-        <div v-if="hallStore.messages.length === 0" class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-          </svg>
-          <span>暂无消息，快来聊天吧~</span>
-        </div>
-      </div>
-
+    <!-- 底部功能区 (固定) -->
+    <div class="side-footer shrink-0 border-t border-[var(--border)]">
       <!-- 消息输入 -->
-      <div class="message-input-area">
+      <div class="message-input-area p-t-16 p-x-16 p-b-12 relative">
         <el-input
           v-model="inputContent"
           placeholder="说点什么..."
@@ -327,585 +320,394 @@ onUnmounted(() => {
             <el-button
               :disabled="!hallStore.connected || !inputContent.trim()"
               @click="handleSend"
-              class="send-btn"
+              class="send-btn bg-transparent border-none p-0 h-full flex items-center justify-center"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
+              <el-icon class="color-white" :size="16"><Promotion /></el-icon>
             </el-button>
           </template>
         </el-input>
-        <div v-if="!hallStore.connected" class="connection-hint">
-          <span class="hint-dot"></span>
+        <div
+          v-if="!hallStore.connected"
+          class="connection-hint absolute left-16 right-16 flex items-center justify-center gap-6 p-4 font-10 border border-[var(--border)] -translate-y-1/2"
+        >
+          <span class="hint-dot w-4 h-4 rounded-full"></span>
           正在连接服务器...
         </div>
       </div>
+
+      <div
+        class="w-full p-x-14 p-y-8 flex items-center justify-between font-12 color-[var(--text-muted)] border-t border-[var(--border)]"
+      >
+        <div>下午好，现在是16:00</div>
+        <div class="flex items-center gap-8">
+          <el-icon
+            class="cursor-pointer transition-colors hover:color-[var(--warning)]"
+            :class="{ 'color-[var(--warning)]': systemStore.theme === 'light' }"
+            @click="systemStore.setTheme('light')"
+          >
+            <Sunny />
+          </el-icon>
+          <el-icon
+            class="cursor-pointer transition-colors hover:color-[var(--accent-primary)]"
+            :class="{ 'color-[var(--accent-primary)]': systemStore.theme === 'dark' }"
+            @click="systemStore.setTheme('dark')"
+          >
+            <Moon />
+          </el-icon>
+        </div>
+      </div>
     </div>
+
+    <!-- 修改用户名弹窗 -->
+    <el-dialog
+      v-model="nameDialogVisible"
+      title="修改用户名"
+      width="300px"
+      :append-to-body="true"
+      class="game-dialog"
+    >
+      <div class="dialog-content flex flex-col gap-16">
+        <el-input
+          v-model="newName"
+          placeholder="请输入新用户名"
+          maxlength="20"
+          show-word-limit
+          clearable
+          size="large"
+        />
+      </div>
+      <template #footer>
+        <el-button @click="nameDialogVisible = false" class="dialog-btn font-500">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="nameUpdating"
+          :disabled="!newName.trim()"
+          @click="confirmUpdateName"
+          class="dialog-btn dialog-btn--primary font-500"
+        >
+          确认修改
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 修改头像弹窗 -->
+    <el-dialog
+      v-model="avatarDialogVisible"
+      title="修改头像"
+      width="340px"
+      :append-to-body="true"
+      class="game-dialog"
+    >
+      <div class="dialog-content avatar-preview flex flex-col gap-16 items-center">
+        <el-avatar :size="80" :src="newAvatar || undefined">
+          {{ userStore.name?.charAt(0) || '?' }}
+        </el-avatar>
+        <el-input v-model="newAvatar" placeholder="粘贴头像图片 URL" clearable size="large" />
+      </div>
+      <template #footer>
+        <el-button @click="avatarDialogVisible = false" class="dialog-btn font-500">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="avatarUpdating"
+          @click="confirmUpdateAvatar"
+          class="dialog-btn dialog-btn--primary font-500"
+        >
+          确认修改
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <style scoped lang="scss">
 .page-side {
-  width: 340px;
   background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-  border-left: 1px solid var(--border);
-  padding: 0;
-  overflow: hidden;
-}
 
-// 顶部标题
-.side-header {
-  padding: 20px 16px 16px;
-  text-align: center;
-  background: linear-gradient(180deg, var(--bg-elevated) 0%, transparent 100%);
-}
+  .side-header {
+    background: linear-gradient(180deg, var(--bg-elevated) 0%, transparent 100%);
 
-.header-decoration {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 12px;
+    .header-decoration {
+      .deco-line {
+        background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+      }
 
-  .deco-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
-  }
+      .deco-icon {
+        color: var(--accent-primary);
+        filter: drop-shadow(0 0 6px var(--accent-glow));
+        animation: pulse 2s ease-in-out infinite;
+      }
+    }
 
-  .deco-icon {
-    width: 24px;
-    height: 24px;
-    color: var(--accent-primary);
-    filter: drop-shadow(0 0 6px var(--accent-glow));
-    animation: pulse 2s ease-in-out infinite;
+    .side-title {
+      color: var(--text);
+      letter-spacing: 2px;
+    }
 
-    svg {
-      width: 100%;
-      height: 100%;
+    .online-indicator {
+      background: var(--bg-card);
+      border-radius: 12px;
+      color: var(--text-muted);
+
+      .indicator-dot {
+        border-radius: 50%;
+        background: var(--text-muted);
+        transition: all 0.3s ease;
+      }
+
+      &.connected {
+        color: var(--success);
+        border-color: rgba(16, 185, 129, 0.2);
+
+        .indicator-dot {
+          background: var(--success);
+          box-shadow: 0 0 8px var(--success);
+        }
+      }
     }
   }
-}
 
-.side-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0 0 8px;
-  letter-spacing: 2px;
-}
-
-.online-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  background: var(--bg-card);
-  border-radius: 12px;
-  font-size: 11px;
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-
-  .indicator-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--text-muted);
-  }
-
-  &.connected {
-    border-color: var(--success);
-    .indicator-dot {
-      background: var(--success);
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    .indicator-text {
-      color: var(--success);
-    }
-  }
-}
-
-// 用户卡片
-.user-card {
-  position: relative;
-  margin: 0 16px 16px;
-  padding: 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-
-  .card-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--accent-gradient);
-  }
-}
-
-.user-main {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.avatar-container {
-  position: relative;
-  cursor: pointer;
-  flex-shrink: 0;
-
-  &:hover .avatar-overlay {
-    opacity: 1;
-  }
-}
-
-.user-avatar {
-  border: 2px solid var(--accent-primary);
-  background: var(--bg-elevated);
-  font-size: 20px;
-  font-weight: 600;
-  box-shadow: 0 0 20px var(--accent-glow);
-}
-
-.avatar-level {
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--warning);
-  color: #000;
-  font-size: 9px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 8px;
-  white-space: nowrap;
-}
-
-.avatar-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-
-  svg {
-    width: 24px;
-    height: 24px;
-    color: white;
-  }
-}
-
-.user-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.user-name-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.user-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.edit-btn {
-  width: 24px;
-  height: 24px;
-  padding: 4px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  &:hover {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: white;
-  }
-}
-
-.user-id {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 4px;
-  font-family: var(--font-mono);
-}
-
-// 通用区块头部
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-
-  .section-icon {
-    width: 14px;
-    height: 14px;
-    color: var(--accent-primary);
-  }
-}
-
-// 公告区
-.notice-section {
-  margin: 0 16px 12px;
-  padding: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-}
-
-.notice-content {
-  margin-top: 8px;
-}
-
-.notice-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 8px;
-  background: var(--bg-elevated);
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  &--highlight {
-    border-left: 2px solid var(--warning);
-    color: var(--text);
-  }
-}
-
-.notice-tag {
-  flex-shrink: 0;
-  padding: 2px 6px;
-  background: var(--error);
-  color: white;
-  font-size: 10px;
-  font-weight: 600;
-  border-radius: 4px;
-
-  &--update {
-    background: var(--info);
-  }
-}
-
-.notice-empty {
-  text-align: center;
-  padding: 12px;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-// 在线玩家
-.online-section {
-  margin: 0 16px 12px;
-  max-height: 160px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.online-count {
-  margin-left: auto;
-  padding: 2px 8px;
-  background: var(--accent-primary);
-  color: white;
-  font-size: 10px;
-  font-weight: 600;
-  border-radius: 10px;
-}
-
-.online-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-}
-
-.online-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 4px;
-  border-radius: var(--radius-sm);
-  transition: background var(--transition-fast);
-
-  &:hover {
-    background: var(--bg-elevated);
-  }
-}
-
-.online-avatar {
-  border: 1px solid var(--border-light);
-  background: var(--bg-elevated);
-  font-size: 11px;
-}
-
-.online-name {
-  flex: 1;
-  font-size: 12px;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.online-level {
-  font-size: 10px;
-}
-
-.more-users {
-  text-align: center;
-  padding: 8px;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-// 聊天区
-.chat-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  margin: 0 16px 16px;
-  min-height: 0;
-}
-
-.message-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  min-height: 120px;
-}
-
-.message-item {
-  padding: 6px 0;
-  font-size: 12px;
-  line-height: 1.5;
-  animation: slideUp 0.3s ease-out;
-
-  &:not(:last-child) {
-    border-bottom: 1px dashed var(--border);
-  }
-}
-
-.message-name {
-  color: var(--accent-secondary);
-  font-weight: 500;
-}
-
-.message-colon {
-  color: var(--text-muted);
-}
-
-.message-content {
-  color: var(--text-secondary);
-  word-break: break-all;
-}
-
-// 空状态
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 24px;
-  color: var(--text-muted);
-  font-size: 12px;
-
-  .empty-icon {
-    width: 32px;
-    height: 32px;
-    opacity: 0.5;
-  }
-}
-
-// 消息输入
-.message-input-area {
-  margin-top: 12px;
-}
-
-.message-input {
-  :deep(.el-input__wrapper) {
+  .user-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
-    box-shadow: none;
-    transition: all var(--transition-fast);
+    border-radius: var(--radius-lg);
 
-    &:hover, &:focus {
-      border-color: var(--accent-primary);
+    .card-glow {
+      top: -50px;
+      right: -50px;
+      background: var(--accent-gradient);
+      filter: blur(40px);
+    }
+
+    .user-main {
+      .avatar-container {
+        .user-avatar {
+          background: var(--bg-secondary);
+
+          &:hover {
+            border-color: var(--accent-primary);
+          }
+        }
+
+        .avatar-level {
+          bottom: -4px;
+          right: -4px;
+          background: var(--accent-gradient);
+          color: white;
+          border-radius: 10px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-overlay {
+          background: rgba(0, 0, 0, 0.4);
+          border-radius: 50%;
+          color: white;
+        }
+
+        &:hover {
+          .avatar-overlay {
+            opacity: 1;
+          }
+        }
+      }
+
+      .user-info {
+        .user-name {
+          color: var(--text);
+        }
+
+        .edit-btn {
+          color: var(--text-muted);
+
+          &:hover {
+            color: var(--accent-primary);
+          }
+        }
+
+        .user-id {
+          color: var(--text-secondary);
+          font-family: var(--font-mono);
+          letter-spacing: 0.5px;
+        }
+      }
     }
   }
 
-  :deep(.el-input__inner) {
+  .section-header {
     color: var(--text);
-    &::placeholder {
+
+    .section-icon {
+      color: var(--accent-primary);
+    }
+  }
+
+  .notice-section {
+    .notice-item {
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      color: var(--text-secondary);
+
+      .notice-tag {
+        border-radius: 4px;
+        color: white;
+        background: var(--accent-gradient);
+
+        &--update {
+          background: var(--success-gradient);
+        }
+      }
+
+      &--highlight {
+        border-color: var(--accent-primary);
+        background: rgba(124, 58, 237, 0.05);
+        color: var(--text);
+      }
+
+      &:hover {
+        transform: translateX(4px);
+      }
+    }
+
+    .notice-empty {
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border-radius: 8px;
+    }
+  }
+
+  .online-section {
+    .online-count {
+      background: var(--bg-secondary);
+      border-radius: 10px;
       color: var(--text-muted);
     }
+
+    .online-item {
+      background: var(--bg-card);
+      border-radius: 16px;
+
+      .online-name {
+        color: var(--text-secondary);
+      }
+
+      .online-level {
+        background: rgba(251, 191, 36, 0.1);
+        color: var(--warning);
+        border-radius: 10px;
+        line-height: 16px;
+      }
+
+      &:hover {
+        border-color: var(--accent-primary);
+        background: var(--bg-elevated);
+      }
+    }
+  }
+
+  .chat-section {
+    .message-list {
+      .message-item {
+        background: var(--bg-card);
+        border-radius: 8px;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .empty-state {
+    color: var(--text-muted);
   }
 }
 
-.send-btn {
-  background: var(--accent-primary) !important;
-  border-color: var(--accent-primary) !important;
-  color: white !important;
-  padding: 0 12px !important;
+.side-footer {
+  background: var(--bg-elevated);
 
-  svg {
-    width: 14px;
-    height: 14px;
-  }
+  .message-input-area {
+    .message-input {
+      :deep(.el-input-group__append) {
+        background: var(--accent-primary);
+        color: white;
+        border: none;
+        padding: 0 12px;
+        transition: opacity 0.2s ease;
 
-  &:hover:not(:disabled) {
-    background: var(--accent-primary-dark-2) !important;
-  }
+        &:hover {
+          opacity: 0.9;
+        }
+      }
 
-  &:disabled {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border) !important;
-    color: var(--text-muted) !important;
+      :deep(.el-input__wrapper) {
+        background: var(--bg-secondary);
+        box-shadow: none;
+        border: 1px solid var(--border);
+
+        &.is-focus {
+          border-color: var(--accent-primary);
+        }
+      }
+    }
+
+    .connection-hint {
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      color: var(--text-muted);
+
+      .hint-dot {
+        background: var(--warning);
+        animation: pulse 1s infinite;
+      }
+    }
   }
 }
 
-.connection-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 8px;
-  font-size: 11px;
-  color: var(--text-muted);
-
-  .hint-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--warning);
-    animation: pulse 1s ease-in-out infinite;
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
   }
 }
 
-// Dialog 样式
 :deep(.game-dialog) {
-  .el-dialog {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-  }
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xl);
 
   .el-dialog__header {
+    margin: 0;
+    padding: 20px;
     border-bottom: 1px solid var(--border);
-    padding: 16px 20px;
-  }
 
-  .el-dialog__title {
-    color: var(--text);
-    font-weight: 600;
+    .el-dialog__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
   }
 
   .el-dialog__body {
-    padding: 20px;
+    padding: 24px 20px;
   }
 
   .el-dialog__footer {
-    border-top: 1px solid var(--border);
-    padding: 16px 20px;
+    padding: 0 20px 20px;
+    border-top: none;
   }
 
-  .el-input__wrapper {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    box-shadow: none;
+  .dialog-btn {
+    border-radius: 8px;
 
-    &:hover, &:focus {
-      border-color: var(--accent-primary);
+    &--primary {
+      background: var(--accent-gradient);
+      border: none;
+      box-shadow: 0 4px 12px var(--accent-glow);
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px var(--accent-glow);
+      }
     }
-  }
-
-  .el-input__inner {
-    color: var(--text);
-    &::placeholder {
-      color: var(--text-muted);
-    }
-  }
-}
-
-.dialog-content {
-  &.avatar-preview {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-}
-
-.dialog-btn {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  color: var(--text);
-
-  &:hover {
-    background: var(--bg-card);
-    border-color: var(--accent-primary);
-  }
-
-  &--primary {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
-    color: white;
-
-    &:hover {
-      background: var(--accent-primary-dark-2);
-    }
-  }
-}
-
-// 动画
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 </style>

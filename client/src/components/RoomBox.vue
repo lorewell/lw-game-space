@@ -107,31 +107,13 @@ const watchers = Math.max(0, props.users.length - 2)
     <div class="flex items-center justify-between m-t-8 p-t-8">
       <div>
         <span v-if="watchers > 0" class="watcher-count inline-flex items-center gap-4 font-12">
-          <svg
-            class="w-14 h-14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
+          <el-icon :size="14"><View /></el-icon>
           {{ watchers }} 观众
         </span>
       </div>
       <div>
         <span class="game-tag inline-flex items-center gap-6 p-y-4 p-x-10 font-12 font-medium">
-          <svg
-            class="w-14 h-14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="2" y="6" width="20" height="12" rx="2" />
-            <path d="M6 12h4M14 12h4" />
-          </svg>
+          <el-icon :size="14"><Monitor /></el-icon>
           {{ props.gameName || '暂无游戏' }}
         </span>
       </div>
@@ -179,8 +161,134 @@ const watchers = Math.max(0, props.users.length - 2)
     }
   }
 
-  &--waiting .vs-text {
+  .room-name {
+    color: var(--text);
+  }
+
+  .status-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+
+    &--waiting {
+      .status-dot {
+        background: var(--text-muted);
+      }
+    }
+    &--ready {
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.2);
+      .status-dot {
+        background: var(--success);
+        box-shadow: 0 0 8px var(--success);
+      }
+    }
+    &--full {
+      color: var(--error);
+      border-color: rgba(239, 68, 68, 0.2);
+      .status-dot {
+        background: var(--error);
+        box-shadow: 0 0 8px var(--error);
+      }
+    }
+    .status-dot {
+      border-radius: 50%;
+    }
+  }
+
+  .player-slot {
+    .player-avatar-wrapper {
+      .player-avatar {
+        border: 2px solid var(--border);
+        background: var(--bg-secondary);
+        transition: border-color 0.3s ease;
+      }
+
+      .avatar-ring {
+        inset: -4px;
+        border: 2px solid transparent;
+        border-radius: 50%;
+        opacity: 0.5;
+
+        &--left {
+          border-left-color: var(--accent-primary);
+          border-top-color: var(--accent-primary);
+        }
+        &--right {
+          border-right-color: var(--accent-secondary);
+          border-bottom-color: var(--accent-secondary);
+        }
+      }
+
+      .avatar-placeholder {
+        background: var(--bg-secondary);
+        border-radius: 50%;
+        border: 2px dashed var(--border);
+        color: var(--text-muted);
+      }
+    }
+
+    .player-name {
+      color: var(--text);
+      max-width: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-level {
+      background: var(--bg-secondary);
+      color: var(--warning);
+      border-radius: 4px;
+    }
+  }
+
+  .vs-badge {
+    width: 32px;
+    height: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    z-index: 1;
+
+    .vs-text {
+      font-size: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .vs-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .watcher-count {
     color: var(--text-muted);
+  }
+
+  .game-tag {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .decor-line {
+    height: 2px;
+    width: 40px;
+    background: var(--border);
+    border-radius: 1px;
+    margin: 0 auto;
+  }
+
+  &--waiting .vs-text {
+    background: var(--text-muted);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   &--ready {
@@ -189,227 +297,31 @@ const watchers = Math.max(0, props.users.length - 2)
       background: var(--success);
       opacity: 0.5;
     }
+    .vs-badge {
+      border-color: var(--success);
+    }
   }
 
   &--full {
     border-color: var(--error);
     .vs-badge {
+      border-color: var(--error);
       animation: glow 2s ease-in-out infinite;
     }
     &::before {
       background: var(--error);
-      opacity: 0.7;
+      opacity: 0.5;
     }
   }
-}
-
-.decor-line {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
-}
-
-.room-name {
-  color: var(--text);
-}
-
-.status-badge {
-  padding: 3px 8px;
-  border-radius: 12px;
-
-  .status-dot {
-    border-radius: 50%;
-  }
-
-  &--waiting {
-    background: rgba(90, 90, 110, 0.3);
-    color: var(--text-muted);
-    .status-dot {
-      background: var(--text-muted);
-    }
-  }
-
-  &--ready {
-    background: rgba(16, 185, 129, 0.15);
-    color: var(--success);
-    .status-dot {
-      background: var(--success);
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-  }
-
-  &--full {
-    background: rgba(239, 68, 68, 0.15);
-    color: var(--error);
-    .status-dot {
-      background: var(--error);
-      animation: pulse 1s ease-in-out infinite;
-    }
-  }
-}
-
-.player-slot--left {
-  .player-avatar {
-    border-color: var(--player-left);
-  }
-  .avatar-ring {
-    border-color: var(--player-left);
-  }
-}
-
-.player-slot--right {
-  .player-avatar {
-    border-color: var(--player-right);
-  }
-  .avatar-ring {
-    border-color: var(--player-right);
-  }
-}
-
-.player-avatar {
-  border: 3px solid var(--accent-primary);
-  background: var(--bg-secondary);
-  font-size: 24px;
-  font-weight: 600;
-  transition: all var(--transition-normal);
-  box-shadow: var(--shadow-md);
-}
-
-.avatar-ring {
-  top: -6px;
-  left: -6px;
-  right: -6px;
-  bottom: -6px;
-  border: 2px dashed;
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: spin 10s linear infinite;
-}
-
-.avatar-placeholder {
-  border-radius: 50%;
-  border: 3px dashed var(--border-light);
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.placeholder-icon {
-  color: var(--text-muted);
-  font-weight: 300;
-}
-
-.player-name {
-  color: var(--text);
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.player-level {
-  color: var(--warning);
-  background: rgba(245, 158, 11, 0.1);
-  border-radius: 8px;
-}
-
-.vs-line {
-  width: 20px;
-  height: 2px;
-  &--left {
-    background: linear-gradient(90deg, transparent, var(--vs-color));
-  }
-  &--right {
-    background: linear-gradient(90deg, var(--vs-color), transparent);
-  }
-}
-
-.vs-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--bg-secondary);
-  border: 2px solid var(--vs-color);
-  box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
-}
-
-.vs-text {
-  font-size: 14px;
-  color: var(--vs-color);
-  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
-  font-family: var(--font-mono);
-}
-
-.watcher-count {
-  color: var(--text-secondary);
-}
-
-.room-footer-border {
-  border-top: 1px solid var(--border);
-}
-
-.game-tag {
-  background: var(--accent-gradient);
-  border-radius: var(--radius-sm);
-  color: white;
 }
 
 @keyframes glow {
   0%,
   100% {
-    box-shadow:
-      0 0 10px rgba(239, 68, 68, 0.4),
-      0 0 20px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 5px rgba(124, 58, 237, 0.2);
   }
   50% {
-    box-shadow:
-      0 0 20px rgba(239, 68, 68, 0.6),
-      0 0 40px rgba(239, 68, 68, 0.3);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-// 小屏幕：头像和 VS 缩小
-@media (max-width: 900px) {
-  .player-avatar-wrapper :deep(.el-avatar) {
-    width: 44px !important;
-    height: 44px !important;
-    line-height: 44px !important;
-    font-size: 18px !important;
-  }
-
-  .avatar-ring {
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-  }
-
-  .vs-badge {
-    width: 32px;
-    height: 32px;
-  }
-
-  .vs-text {
-    font-size: 10px;
-  }
-
-  .vs-line {
-    width: 12px;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
   }
 }
 </style>

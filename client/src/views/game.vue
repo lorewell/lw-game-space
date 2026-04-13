@@ -27,7 +27,7 @@ onUnmounted(() => gameStore.leave())
 </script>
 
 <template>
-  <div class="game-view h-full flex flex-col items-center justify-center gap-24 p-24">
+  <div class="w-full h-full flex flex-col items-center justify-center gap-24 p-24">
     <!-- 连接中 -->
     <template v-if="!gameStore.connected">
       <el-icon class="is-loading" :size="32"><Loading /></el-icon>
@@ -36,7 +36,7 @@ onUnmounted(() => gameStore.leave())
 
     <!-- 已连接 -->
     <template v-else>
-      <div class="room-header flex items-center justify-between w-full" style="max-width: 600px">
+      <div class="flex items-center justify-between w-full max-w-600">
         <el-button size="small" @click="back">返回大厅</el-button>
         <span class="font-16 font-bold">房间：{{ gameStore.roomId }}</span>
         <el-tag :type="gameStore.status === 'playing' ? 'success' : 'info'">
@@ -44,7 +44,7 @@ onUnmounted(() => gameStore.leave())
         </el-tag>
       </div>
 
-      <div class="players-area flex items-center gap-40" style="max-width: 600px">
+      <div class="flex items-center gap-40 w-full max-w-600">
         <div
           v-for="player in gameStore.players"
           :key="player.sessionId"
@@ -78,10 +78,6 @@ onUnmounted(() => gameStore.leave())
 </template>
 
 <style scoped lang="scss">
-.game-view {
-  width: 100%;
-}
-
 .player-card {
   border: 1px solid var(--el-border-color);
   background: var(--el-fill-color-light);

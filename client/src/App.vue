@@ -8,7 +8,12 @@ import { Loading } from '@element-plus/icons-vue'
 const route = useRoute()
 const systemStore = useSystemStore()
 
-const { loading, loadingTip } = storeToRefs(systemStore)
+const { loading, loadingTip, theme } = storeToRefs(systemStore)
+
+onMounted(() => {
+  document.documentElement.setAttribute('data-theme', theme.value)
+})
+
 const layoutMap: Record<string, typeof DefaultLayout> = {
   DefaultLayout
 }

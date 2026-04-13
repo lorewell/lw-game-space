@@ -1,5 +1,6 @@
-:root {
-  /* ========== 基础色彩 ========== */
+:root,
+[data-theme='dark'] {
+  /* ========== 基础色彩 (Dark) ========== */
   --text: #e0e0e8;
   --text-secondary: #8b8b9e;
   --text-muted: #5a5a6e;
@@ -9,7 +10,26 @@
   --bg-card: #1e1e2a;
   --border: #2a2a3a;
   --border-light: #363648;
+  
+  color-scheme: dark;
+}
 
+[data-theme='light'] {
+  /* ========== 基础色彩 (Light) ========== */
+  --text: #1a1a2e;
+  --text-secondary: #4a4a68;
+  --text-muted: #80809b;
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-elevated: #f1f3f5;
+  --bg-card: #ffffff;
+  --border: #dee2e6;
+  --border-light: #e9ecef;
+
+  color-scheme: light;
+}
+
+:root {
   /* ========== 游戏主题强调色 ========== */
   --accent-primary: #7c3aed;      /* 主紫色 */
   --accent-secondary: #06b6d4;    /* 青色 */
@@ -51,7 +71,6 @@
   font-family: var(--font-family);
   font-size: 16px;
   line-height: 1.5;
-  color-scheme: dark;
   color: var(--text);
   background: var(--bg-primary);
   font-synthesis: none;

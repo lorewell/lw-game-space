@@ -3,9 +3,9 @@ import PageSide from './components/PageSide.vue'
 </script>
 
 <template>
-  <el-container class="game-layout">
+  <el-container class="relative w-screen h-screen overflow-hidden">
     <!-- 背景装饰 -->
-    <div class="bg-decoration">
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
       <div class="bg-orb bg-orb--1"></div>
       <div class="bg-orb bg-orb--2"></div>
       <div class="bg-grid"></div>
@@ -24,23 +24,11 @@ import PageSide from './components/PageSide.vue'
 </template>
 
 <style lang="scss" scoped>
-.game-layout {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+.el-container {
   background: var(--bg-primary);
 }
 
 // 背景装饰
-.bg-decoration {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
-
 .bg-orb {
   position: absolute;
   border-radius: 50%;
@@ -69,7 +57,7 @@ import PageSide from './components/PageSide.vue'
 .bg-grid {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(var(--border) 1px, transparent 1px),
     linear-gradient(90deg, var(--border) 1px, transparent 1px);
   background-size: 50px 50px;
@@ -77,7 +65,8 @@ import PageSide from './components/PageSide.vue'
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0);
   }
   25% {
@@ -100,6 +89,5 @@ import PageSide from './components/PageSide.vue'
   display: flex;
   flex-direction: column;
   background: transparent;
-  overflow: hidden;
 }
 </style>

@@ -9,6 +9,7 @@ export interface UserType{
 
 // ==================== System ====================
 export interface SystemState {
+  theme: 'light' | 'dark'
   loading: boolean
   loadingTip: string
   newSpaceNotice: string
