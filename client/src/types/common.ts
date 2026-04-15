@@ -1,5 +1,5 @@
 // ==================== User ====================
-export interface UserType{
+export interface UserType {
   name: string
   id: string
   sessionId: string
@@ -31,11 +31,17 @@ export interface HallState {
   messages: ChatMessage[]
 }
 
-// ==================== room ====================
+// ==================== Room ====================
+export interface RoomUser {
+  userId: string
+  name: string
+  avatar: string
+  level: number
+}
+
 export interface RoomState {
-  roomId: string,
-  roomName: string,
-  gameName: string,
-  users: UserType[],
-  messages: ChatMessage[]
+  roomId: string
+  roomName: string
+  gameName: string
+  users: RoomUser[]
 }

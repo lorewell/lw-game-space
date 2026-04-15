@@ -1,5 +1,6 @@
 import { Room, Client } from "colyseus";
 import { HallRoomState, HallUser, ChatMessage } from "./schema/HallRoomState";
+import { ChatMessage as ChatMessageModel } from "../models/ChatMessage";
 
 const MAX_MESSAGES = 50;
 
@@ -11,14 +12,17 @@ export class HallRoom extends Room<HallRoomState> {
     this.setState(new HallRoomState());
     this.autoDispose = false;
 
-    this.onMessage("chat", (client, payload: { content: string }) => {
+    this.onMessage("chat", async (client, payload: { content: string }) => {
       const user = this.state.users.get(client.sessionId);
       if (!user || !payload.content?.trim()) return;
 
+      const content = payload.content.trim().slice(0, 500);
+
+      // 创建 Colyseus 实时消息（用于广播）
       const msg = new ChatMessage();
       msg.sessionId = client.sessionId;
       msg.userName = user.name;
-      msg.content = payload.content.trim().slice(0, 200);
+      msg.content = content;
       msg.timestamp = Date.now();
 
       this.state.messages.push(msg);
@@ -26,6 +30,18 @@ export class HallRoom extends Room<HallRoomState> {
       // 超出上限时移除最旧的消息
       if (this.state.messages.length > MAX_MESSAGES) {
         this.state.messages.splice(0, 1);
+      }
+
+      // 持久化到 MongoDB
+      try {
+        await ChatMessageModel.create({
+          userId: user.sessionId,
+          userName: user.name,
+          content: content,
+          type: 'hall'
+        });
+      } catch (err) {
+        console.error('[HallRoom] 消息持久化失败:', err);
       }
     });
 

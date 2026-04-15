@@ -11,6 +11,7 @@ import { connectMongo } from "./db/mongo";
 import { connectRedis } from "./db/redis";
 import userRoutes from "./routes/user";
 import roomRoutes from "./routes/room";
+import chatRoutes from "./routes/chat";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -27,6 +28,7 @@ async function bootstrap() {
   // REST API 路由
   app.use("/api/user", userRoutes);
   app.use("/api/room", roomRoutes);
+  app.use("/api/chat", chatRoutes);
 
   // Colyseus 监控面板（开发用）
   app.use("/colyseus", monitor());
