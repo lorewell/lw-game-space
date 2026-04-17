@@ -1,20 +1,23 @@
 # 构建阶段
 FROM node:20-alpine AS builder
 
+# 安装 pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /app
 
 # 复制依赖文件
 COPY package*.json pnpm-lock.yaml* ./
 
-# 安装依赖（使用 pnpm 如果有 lock 文件，否则用 npm）
-RUN npm install
+# 安装依赖
+RUN pnpm install --frozen-lockfile
 
 # 复制源码
 COPY tsconfig.json ./
 COPY src/ ./src/
 
 # 编译 TypeScript
-RUN npm run build
+RUN pnpm build
 
 # 生产阶段
 FROM node:20-alpine AS production
