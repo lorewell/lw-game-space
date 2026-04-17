@@ -1,84 +1,122 @@
+/* ========================================
+   游戏对战平台 - 全局样式系统
+   ======================================== */
+
+/* ========== 主题变量 ========== */
 :root,
 [data-theme='dark'] {
-  /* ========== 基础色彩 (Dark) ========== */
-  --text: #e0e0e8;
-  --text-secondary: #8b8b9e;
-  --text-muted: #5a5a6e;
-  --bg-primary: #0f0f14;
-  --bg-secondary: #16161e;
-  --bg-elevated: #1c1c26;
-  --bg-card: #1e1e2a;
+  /* 背景色系 */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: #1a1a24;
+  --bg-elevated: #22222e;
+  --bg-hover: #2a2a38;
+
+  /* 边框色系 */
   --border: #2a2a3a;
-  --border-light: #363648;
-  
-  color-scheme: dark;
-}
+  --border-light: #3a3a4a;
+  --border-focus: #6366f1;
 
-[data-theme='light'] {
-  /* ========== 基础色彩 (Light) ========== */
-  --text: #1a1a2e;
-  --text-secondary: #4a4a68;
-  --text-muted: #80809b;
-  --bg-primary: #f8f9fa;
-  --bg-secondary: #ffffff;
-  --bg-elevated: #f1f3f5;
-  --bg-card: #ffffff;
-  --border: #dee2e6;
-  --border-light: #e9ecef;
+  /* 文字色系 */
+  --text: #e4e4ed;
+  --text-secondary: #8888a0;
+  --text-muted: #5a5a70;
 
-  color-scheme: light;
-}
+  /* 强调色 */
+  --accent-primary: #6366f1;
+  --accent-secondary: #22d3ee;
+  --accent-tertiary: #f472b6;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #22d3ee 50%, #f472b6 100%);
+  --accent-glow: rgba(99, 102, 241, 0.4);
 
-:root {
-  /* ========== 游戏主题强调色 ========== */
-  --accent-primary: #7c3aed;      /* 主紫色 */
-  --accent-secondary: #06b6d4;    /* 青色 */
-  --accent-glow: rgba(124, 58, 237, 0.4);
-  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
-
-  /* ========== 语义色彩 ========== */
+  /* 语义色 */
   --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.1);
   --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.1);
   --error: #ef4444;
+  --error-bg: rgba(239, 68, 68, 0.1);
   --info: #3b82f6;
+  --info-bg: rgba(59, 130, 246, 0.1);
 
-  /* ========== 玩家色彩 ========== */
-  --player-left: #f97316;   /* 橙色 - 左侧玩家 */
-  --player-right: #3b82f6;  /* 蓝色 - 右侧玩家 */
-  --vs-color: #fbbf24;      /* VS金色 */
+  /* 玩家色 */
+  --player-left: #f97316;
+  --player-right: #3b82f6;
+  --vs-color: #fbbf24;
 
-  /* ========== 阴影系统 ========== */
+  /* 阴影 */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 20px var(--accent-glow);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.2);
 
-  /* ========== 过渡动画 ========== */
-  --transition-fast: 150ms ease;
-  --transition-normal: 300ms ease;
-  --transition-slow: 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  /* 背景装饰 */
+  --orb-1-color: rgba(99, 102, 241, 0.15);
+  --orb-2-color: rgba(34, 211, 238, 0.12);
+  --grid-color: rgba(42, 42, 58, 0.5);
 
-  /* ========== 圆角系统 ========== */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-
-  /* ========== 字体 ========== */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-
-  font-family: var(--font-family);
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--text);
-  background: var(--bg-primary);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark;
 }
 
+[data-theme='light'] {
+  /* 背景色系 - 浅色模式 */
+  --bg-primary: #f8f9fc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-elevated: #f0f2f7;
+  --bg-hover: #e8eaf0;
+
+  /* 边框色系 */
+  --border: #e2e4ea;
+  --border-light: #ebedf2;
+  --border-focus: #6366f1;
+
+  /* 文字色系 */
+  --text: #1a1a2e;
+  --text-secondary: #5a5a70;
+  --text-muted: #8888a0;
+
+  /* 强调色 */
+  --accent-primary: #6366f1;
+  --accent-secondary: #0891b2;
+  --accent-tertiary: #db2777;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #0891b2 50%, #db2777 100%);
+  --accent-glow: rgba(99, 102, 241, 0.25);
+
+  /* 语义色 */
+  --success: #059669;
+  --success-bg: rgba(5, 150, 105, 0.1);
+  --warning: #d97706;
+  --warning-bg: rgba(217, 119, 6, 0.1);
+  --error: #dc2626;
+  --error-bg: rgba(220, 38, 38, 0.1);
+  --info: #2563eb;
+  --info-bg: rgba(37, 99, 235, 0.1);
+
+  /* 玩家色 */
+  --player-left: #ea580c;
+  --player-right: #2563eb;
+  --vs-color: #ca8a04;
+
+  /* 阴影 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.12), 0 0 20px rgba(99, 102, 241, 0.15);
+
+  /* 背景装饰 */
+  --orb-1-color: rgba(99, 102, 241, 0.08);
+  --orb-2-color: rgba(34, 211, 238, 0.06);
+  --grid-color: rgba(226, 228, 234, 0.5);
+
+  color-scheme: light;
+}
+
+/* ========== 基础重置 ========== */
 *,
 *::before,
 *::after {
@@ -87,34 +125,19 @@
   padding: 0;
 }
 
-/* ========== 滚动条美化 ========== */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-light);
-  border-radius: 3px;
-  transition: background var(--transition-fast);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-primary);
-}
-
-/* ========== 基础元素 ========== */
 html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
   background: var(--bg-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -123,41 +146,75 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: var(--accent-secondary);
+  color: var(--accent-primary);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--accent-primary);
+  color: var(--accent-secondary);
+}
+
+/* ========== 滚动条 ========== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
 }
 
 /* ========== Element Plus 主题覆盖 ========== */
 :root {
+  /* 主色 */
   --el-color-primary: var(--accent-primary);
-  --el-color-primary-light-3: #9f67ff;
-  --el-color-primary-light-5: #b88fff;
-  --el-color-primary-light-7: #d1b3ff;
-  --el-color-primary-light-8: #e0ccff;
-  --el-color-primary-light-9: #efe5ff;
-  --el-color-primary-dark-2: #6b2fd9;
+  --el-color-primary-light-3: #818cf8;
+  --el-color-primary-light-5: #a5b4fc;
+  --el-color-primary-light-7: #c7d2fe;
+  --el-color-primary-light-8: #dde4ff;
+  --el-color-primary-light-9: #eef2ff;
+  --el-color-primary-dark-2: #4f46e5;
+
+  /* 文字色 */
   --el-text-color-primary: var(--text);
   --el-text-color-regular: var(--text-secondary);
   --el-text-color-secondary: var(--text-muted);
   --el-text-color-placeholder: var(--text-muted);
+
+  /* 背景色 */
   --el-fill-color-blank: var(--bg-card);
   --el-fill-color-light: var(--bg-elevated);
   --el-fill-color: var(--bg-secondary);
+
+  /* 边框色 */
   --el-border-color: var(--border);
   --el-border-color-light: var(--border-light);
   --el-border-color-lighter: var(--border);
   --el-bg-color: var(--bg-secondary);
   --el-mask-color: rgba(0, 0, 0, 0.7);
+
+  /* 阴影 */
   --el-box-shadow: var(--shadow-md);
   --el-box-shadow-light: var(--shadow-sm);
+
+  /* 圆角 */
+  --el-border-radius-base: 10px;
+  --el-border-radius-small: 6px;
+  --el-border-radius-round: 20px;
 }
 
-/* ========== 全局过渡动画 ========== */
+/* ========== 全局动画 ========== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -166,11 +223,33 @@ a:hover {
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -179,11 +258,103 @@ a:hover {
   50% { opacity: 0.5; }
 }
 
-@keyframes glow {
+@keyframes glowPulse {
   0%, 100% {
-    box-shadow: 0 0 5px var(--accent-glow), 0 0 10px var(--accent-glow);
+    box-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow);
   }
   50% {
-    box-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow), 0 0 30px var(--accent-glow);
+    box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow);
   }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes borderFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes bounceSubtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* ========== 工具类 ========== */
+.gradient-text {
+  background: var(--accent-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.gradient-border {
+  position: relative;
+  background: var(--bg-card);
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: var(--accent-gradient);
+  border-radius: inherit;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+.glass {
+  background: var(--bg-secondary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ========== 状态样式 ========== */
+[data-theme='dark'] {
+  .glow-effect {
+    box-shadow: 0 0 30px var(--accent-glow);
+  }
+}
+
+[data-theme='light'] {
+  .glow-effect {
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+  }
+}
+
+/* ========== 页面过渡 ========== */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }

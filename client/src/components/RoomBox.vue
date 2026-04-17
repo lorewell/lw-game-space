@@ -8,7 +8,7 @@ const isWaiting = props.users.length === 0
 const isFull = props.users.length >= 2
 const hasOnePlayer = props.users.length === 1
 
-// 获取玩家（兼容两种类型）
+// 获取玩家信息（兼容两种类型）
 const getPlayerName = (user?: RoomUser) => user?.name || '等待加入'
 const getPlayerLevel = (user?: RoomUser) => user?.level || 1
 const getPlayerAvatar = (user?: RoomUser) => user?.avatar
@@ -16,459 +16,287 @@ const getPlayerAvatar = (user?: RoomUser) => user?.avatar
 
 <template>
   <div
-    class="room-box"
+    class="room-box group relative flex flex-col h-full p-4 rounded-xl overflow-hidden cursor-pointer transition-all duration-300"
     :class="{
       'room-box--waiting': isWaiting,
       'room-box--ready': hasOnePlayer,
       'room-box--full': isFull
     }"
   >
-    <!-- 顶部装饰线 -->
-    <div class="room-decor-top">
-      <div class="decor-line"></div>
-      <div class="decor-diamond"></div>
-      <div class="decor-line"></div>
+    <!-- 背景光效 -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="room-glow absolute w-40 h-40 rounded-full transition-opacity duration-500" />
+      <div class="corner-accent corner-accent--tl" />
+      <div class="corner-accent corner-accent--tr" />
+      <div class="corner-accent corner-accent--bl" />
+      <div class="corner-accent corner-accent--br" />
     </div>
 
-    <!-- 房间名称 -->
-    <div class="room-header">
-      <h3 class="room-name">{{ props.roomName }}</h3>
-      <div class="room-status">
-        <span v-if="isWaiting" class="status-badge status-badge--waiting">
-          <span class="status-dot"></span>
-          等待中
-        </span>
-        <span v-else-if="hasOnePlayer" class="status-badge status-badge--ready">
-          <span class="status-dot"></span>
-          准备中
-        </span>
-        <span v-else class="status-badge status-badge--full">
-          <span class="status-dot"></span>
-          对战中
+    <!-- 顶部装饰 -->
+    <div class="relative flex items-center justify-center gap-3 mb-3 z-1">
+      <div class="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+      <div class="w-2 h-2 rotate-45 bg-accent-primary shadow-[0_0_8px_var(--accent-glow)]" />
+      <div class="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+    </div>
+
+    <!-- 房间头部 -->
+    <div class="relative flex items-center justify-between mb-3 z-1">
+      <h3 class="text-base font-semibold text-text">{{ props.roomName }}</h3>
+      <div class="status-badge" :class="{
+        'status-badge--waiting': isWaiting,
+        'status-badge--ready': hasOnePlayer,
+        'status-badge--full': isFull
+      }">
+        <span class="status-dot" />
+        <span class="text-xs font-medium">
+          {{ isWaiting ? '等待中' : hasOnePlayer ? '准备中' : '对战中' }}
         </span>
       </div>
     </div>
 
     <!-- 对战区域 -->
-    <div class="battle-area">
+    <div class="relative flex-1 flex items-center justify-between gap-2 z-1 min-h-0">
       <!-- 玩家1 -->
-      <div class="player-slot player-slot--left">
-        <div class="player-avatar-wrapper">
-          <el-avatar :size="64" :src="getPlayerAvatar(props.users[0])" class="player-avatar">
+      <div class="player-slot player-slot--left flex flex-col items-center gap-1.5 flex-1">
+        <div class="relative">
+          <div class="avatar-glow absolute inset-0 rounded-full scale-110" />
+          <el-avatar
+            :size="56"
+            :src="getPlayerAvatar(props.users[0])"
+            class="player-avatar border-2 transition-all duration-300"
+          >
             {{ props.users[0]?.name?.charAt(0) || '?' }}
           </el-avatar>
-          <div class="avatar-ring ring--left"></div>
-          <div v-if="!props.users[0]" class="avatar-placeholder">
-            <span class="placeholder-icon">+</span>
+          <div v-if="!props.users[0]" class="avatar-placeholder absolute inset-0 flex items-center justify-center rounded-full border-2 border-dashed border-border">
+            <span class="text-xl text-text-muted font-light">+</span>
           </div>
         </div>
-        <span class="player-name">{{ getPlayerName(props.users[0]) }}</span>
-        <span v-if="props.users[0]" class="player-level">
+        <span class="player-name text-xs font-medium text-text max-w-16 truncate">
+          {{ getPlayerName(props.users[0]) }}
+        </span>
+        <span v-if="props.users[0]" class="player-level text-xs px-1.5 py-0.5 rounded-md bg-warning/10 text-warning">
           Lv.{{ getPlayerLevel(props.users[0]) }}
         </span>
       </div>
 
       <!-- VS 区域 -->
-      <div class="vs-container">
-        <div class="vs-line vs-line--left"></div>
-        <div class="vs-badge">
-          <span class="vs-text">VS</span>
+      <div class="vs-container flex items-center gap-1.5">
+        <div class="vs-line w-6 h-0.5 bg-gradient-to-r from-transparent to-player-left" />
+        <div class="vs-badge w-10 h-10 flex items-center justify-center rounded-full relative">
+          <span class="vs-text text-sm font-bold">VS</span>
         </div>
-        <div class="vs-line vs-line--right"></div>
+        <div class="vs-line w-6 h-0.5 bg-gradient-to-l from-transparent to-player-right" />
       </div>
 
       <!-- 玩家2 -->
-      <div class="player-slot player-slot--right">
-        <div class="player-avatar-wrapper">
-          <el-avatar :size="64" :src="getPlayerAvatar(props.users[1])" class="player-avatar">
+      <div class="player-slot player-slot--right flex flex-col items-center gap-1.5 flex-1">
+        <div class="relative">
+          <div class="avatar-glow avatar-glow--right absolute inset-0 rounded-full scale-110" />
+          <el-avatar
+            :size="56"
+            :src="getPlayerAvatar(props.users[1])"
+            class="player-avatar player-avatar--right border-2 transition-all duration-300"
+          >
             {{ props.users[1]?.name?.charAt(0) || '?' }}
           </el-avatar>
-          <div class="avatar-ring ring--right"></div>
-          <div v-if="!props.users[1]" class="avatar-placeholder">
-            <span class="placeholder-icon">+</span>
+          <div v-if="!props.users[1]" class="avatar-placeholder absolute inset-0 flex items-center justify-center rounded-full border-2 border-dashed border-border">
+            <span class="text-xl text-text-muted font-light">+</span>
           </div>
         </div>
-        <span class="player-name">{{ getPlayerName(props.users[1]) }}</span>
-        <span v-if="props.users[1]" class="player-level">
+        <span class="player-name text-xs font-medium text-text max-w-16 truncate">
+          {{ getPlayerName(props.users[1]) }}
+        </span>
+        <span v-if="props.users[1]" class="player-level text-xs px-1.5 py-0.5 rounded-md bg-warning/10 text-warning">
           Lv.{{ getPlayerLevel(props.users[1]) }}
         </span>
       </div>
     </div>
 
     <!-- 底部信息 -->
-    <div class="room-footer">
-      <div class="footer-left">
-        <span class="player-count">
-          <svg class="count-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-          </svg>
-          {{ props.users.length }}/2
-        </span>
+    <div class="relative flex items-center justify-between mt-3 pt-3 border-t border-border z-1">
+      <div class="flex items-center gap-1.5 text-xs text-text-secondary">
+        <i class="i-ph-users-three text-sm" />
+        <span>{{ props.users.length }}/2</span>
       </div>
-      <div class="footer-right">
-        <span class="game-tag">
-          <svg class="game-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="6" width="20" height="12" rx="2"/>
-            <path d="M6 12h4M14 12h4"/>
-          </svg>
-          {{ props.gameName || '暂无游戏' }}
-        </span>
+      <div class="game-tag flex items-center gap-1.5 px-2 py-1 rounded-md bg-gradient-to-r from-accent-primary to-accent-secondary text-white text-xs font-medium">
+        <i class="i-ph-game-controller text-sm" />
+        <span>{{ props.gameName || '暂无游戏' }}</span>
       </div>
-    </div>
-
-    <!-- 底部装饰 -->
-    <div class="room-decor-bottom">
-      <div class="decor-line"></div>
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
+/* 基础样式 */
 .room-box {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  padding: 16px;
-  background: linear-gradient(
-    145deg,
-    var(--bg-card) 0%,
-    var(--bg-elevated) 100%
-  );
+  background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--accent-gradient);
-    opacity: 0;
-    transition: opacity var(--transition-normal);
-  }
-
-  &:hover {
-    border-color: var(--accent-primary);
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 
-      var(--shadow-lg),
-      0 0 30px rgba(124, 58, 237, 0.15);
-
-    &::before {
-      opacity: 1;
-    }
-
-    .vs-badge {
-      animation: glow 2s ease-in-out infinite;
-    }
-  }
-
-  &--waiting {
-    .vs-text { color: var(--text-muted); }
-  }
-
-  &--ready {
-    border-color: var(--success);
-    &::before {
-      background: var(--success);
-      opacity: 0.5;
-    }
-  }
-
-  &--full {
-    border-color: var(--error);
-    .vs-badge {
-      animation: glow 2s ease-in-out infinite;
-    }
-    &::before {
-      background: var(--error);
-      opacity: 0.7;
-    }
-  }
+  box-shadow: var(--shadow-card);
 }
 
-.room-decor-top {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 12px;
+.room-box:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-card-hover);
+}
 
-  .decor-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--border-light),
-      transparent
-    );
+/* 状态变体 */
+.room-box--waiting {
+  .vs-text { color: var(--text-muted); }
+  .room-glow { background: var(--text-muted); opacity: 0.1; }
+}
+
+.room-box--ready {
+  border-color: var(--success);
+  .room-glow { background: var(--success); opacity: 0.15; }
+  .vs-badge { animation: glowPulse 2s ease-in-out infinite; }
+  .status-dot { animation: pulse 1.5s ease-in-out infinite; }
+}
+
+.room-box--full {
+  border-color: var(--error);
+  .room-glow { background: var(--error); opacity: 0.2; }
+  .vs-badge {
+    animation: glowPulse 2s ease-in-out infinite;
+    --tw-shadow-color: var(--error);
   }
-
-  .decor-diamond {
-    width: 8px;
-    height: 8px;
-    background: var(--accent-primary);
-    transform: rotate(45deg);
-    box-shadow: 0 0 8px var(--accent-glow);
-  }
+  .status-dot { animation: pulse 1s ease-in-out infinite; }
 }
 
-.room-decor-bottom {
-  margin-top: auto;
-  padding-top: 12px;
-
-  .decor-line {
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--border-light),
-      transparent
-    );
-  }
+/* 背景光效 */
+.room-glow {
+  top: -20px;
+  left: -20px;
+  filter: blur(30px);
+  transition: opacity 0.5s ease;
 }
 
-.room-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+.group:hover .room-glow {
+  opacity: 0.3;
 }
 
-.room-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0;
+/* 角落装饰 */
+.corner-accent {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--border-light);
+  opacity: 0.5;
+  transition: all 0.3s ease;
 }
 
+.corner-accent--tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+.corner-accent--tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+.corner-accent--bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+.corner-accent--br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+.group:hover .corner-accent {
+  border-color: var(--accent-primary);
+  opacity: 1;
+}
+
+/* 状态徽章 */
 .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 500;
-
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-  }
-
-  &--waiting {
-    background: rgba(90, 90, 110, 0.3);
-    color: var(--text-muted);
-    .status-dot { background: var(--text-muted); }
-  }
-
-  &--ready {
-    background: rgba(16, 185, 129, 0.15);
-    color: var(--success);
-    .status-dot { 
-      background: var(--success);
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-  }
-
-  &--full {
-    background: rgba(239, 68, 68, 0.15);
-    color: var(--error);
-    .status-dot { 
-      background: var(--error);
-      animation: pulse 1s ease-in-out infinite;
-    }
-  }
 }
 
-.battle-area {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 0;
+.status-badge--waiting {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  .status-dot { background: var(--text-muted); }
 }
 
-.player-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-
-  &--left {
-    .player-avatar { border-color: var(--player-left); }
-    .avatar-ring { border-color: var(--player-left); }
-  }
-
-  &--right {
-    .player-avatar { border-color: var(--player-right); }
-    .avatar-ring { border-color: var(--player-right); }
-  }
+.status-badge--ready {
+  background: var(--success-bg);
+  color: var(--success);
+  .status-dot { background: var(--success); }
 }
 
-.player-avatar-wrapper {
-  position: relative;
+.status-badge--full {
+  background: var(--error-bg);
+  color: var(--error);
+  .status-dot { background: var(--error); }
 }
+
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+/* 玩家样式 */
+.player-slot--left .player-avatar { border-color: var(--player-left); }
+.player-slot--right .player-avatar--right { border-color: var(--player-right); }
 
 .player-avatar {
-  border: 3px solid var(--accent-primary);
   background: var(--bg-secondary);
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
-  transition: all var(--transition-normal);
   box-shadow: var(--shadow-md);
 }
 
-.avatar-ring {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  right: -6px;
-  bottom: -6px;
-  border: 2px dashed;
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: spin 10s linear infinite;
+.player-slot--left .avatar-glow {
+  background: var(--player-left);
+  opacity: 0.2;
+  left: -8px;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.player-slot--right .avatar-glow--right {
+  background: var(--player-right);
+  opacity: 0.2;
+  right: -8px;
 }
 
-.avatar-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: 3px dashed var(--border-light);
-  background: rgba(0, 0, 0, 0.2);
-
-  .placeholder-icon {
-    font-size: 28px;
-    color: var(--text-muted);
-    font-weight: 300;
-  }
+.group:hover .avatar-glow {
+  opacity: 0.4;
 }
 
 .player-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   text-align: center;
 }
 
 .player-level {
   font-size: 10px;
-  color: var(--warning);
-  background: rgba(245, 158, 11, 0.1);
-  padding: 2px 6px;
-  border-radius: 8px;
 }
 
+/* VS 徽章 */
 .vs-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 4px;
-}
-
-.vs-line {
-  width: 20px;
-  height: 2px;
-  background: var(--border-light);
-
-  &--left {
-    background: linear-gradient(90deg, transparent, var(--vs-color));
-  }
-
-  &--right {
-    background: linear-gradient(90deg, var(--vs-color), transparent);
-  }
+  flex-shrink: 0;
 }
 
 .vs-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
   background: var(--bg-secondary);
   border: 2px solid var(--vs-color);
   box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
 }
 
 .vs-text {
-  font-size: 14px;
-  font-weight: 700;
   color: var(--vs-color);
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
-.room-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+.vs-line {
+  height: 2px;
 }
 
-.player-count {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--text-secondary);
-
-  .count-icon {
-    width: 14px;
-    height: 14px;
-  }
-}
-
+/* 游戏标签 */
 .game-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: var(--accent-gradient);
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 500;
-  color: white;
-
-  .game-icon {
-    width: 14px;
-    height: 14px;
-  }
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
 }
 
-@keyframes glow {
+/* 动画 */
+@keyframes glowPulse {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.4), 0 0 20px rgba(251, 191, 36, 0.2);
   }
   50% {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), 0 0 40px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), 0 0 40px rgba(251, 191, 36, 0.3);
   }
 }
 

@@ -58,7 +58,6 @@ async function userLogin() {
   hallStore.connect()
 }
 
-// 编辑用户信息
 const userInfoDialogVisible = ref(false)
 
 function openUserInfoDialog() {
@@ -77,223 +76,182 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="page-side h-full flex flex-col w-340 border-l border-[var(--border)]">
-    <!-- 顶部区域(固定) -->
-    <div class="side-header shrink-0 p-t-20 p-x-16 p-b-16 text-center">
-      <div class="header-decoration flex items-center justify-center gap-12 m-b-12">
-        <div class="deco-line flex-1 h-1"></div>
-        <div class="deco-icon w-24 h-24 flex items-center justify-center">
-          <el-icon :size="20"><Star /></el-icon>
+  <div class="page-side h-full flex flex-col w-80 bg-gradient-to-b from-bg-secondary to-bg-primary border-l border-border relative overflow-hidden">
+    <!-- 背景装饰 -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-accent-primary/5 blur-60" />
+      <div class="absolute -bottom-10 right-0 w-32 h-32 rounded-full bg-accent-secondary/5 blur-50" />
+    </div>
+
+    <!-- 顶部区域 - 用户卡片 -->
+    <div class="relative shrink-0 px-3 pt-3 pb-2 z-1">
+      <!-- 标题 -->
+      <div class="flex items-center justify-center gap-2 mb-2">
+        <div class="h-px flex-1 bg-gradient-to-r from-transparent to-accent-primary/50" />
+        <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-accent-primary/10">
+          <i class="i-ph-crown text-accent-primary text-xs" />
+          <span class="text-xs font-semibold gradient-text">游戏大厅</span>
         </div>
-        <div class="deco-line flex-1 h-1"></div>
+        <div class="h-px flex-1 bg-gradient-to-l from-transparent to-accent-primary/50" />
       </div>
-      <h2 class="side-title font-18 font-bold m-0 m-b-16">游戏大厅</h2>
 
       <!-- 用户信息卡片 -->
-      <div class="user-card relative p-12 border border-[var(--border)] overflow-hidden text-left">
-        <div class="card-glow absolute w-100 h-100 pointer-events-none opacity-10"></div>
-        <div class="user-main flex items-center gap-12 relative z-1">
-          <!-- 头像 -->
-          <div class="avatar-container relative cursor-pointer" @click="openUserInfoDialog">
-            <el-avatar
-              :size="48"
-              :src="userStore.avatar || undefined"
-              class="user-avatar border-2 border-[var(--border)] transition-all-300"
-            >
+      <div class="user-card relative flex items-center gap-2 p-2 rounded-lg border border-border bg-bg-card/80 hover:border-accent-primary/50 transition-all cursor-pointer" @click="openUserInfoDialog">
+        <!-- 头像 -->
+        <div class="relative shrink-0">
+          <div class="p-0.5 rounded-full bg-gradient-to-r from-accent-primary to-accent-secondary">
+            <el-avatar :size="36" :src="userStore.avatar || undefined" class="bg-bg-secondary border-2 border-bg-card">
               {{ userStore.name?.charAt(0) || '?' }}
             </el-avatar>
-            <div
-              class="avatar-level absolute p-y-2 p-x-6 font-10 font-bold border border-[var(--bg-card)]"
-            >
-              <span>Lv.{{ userStore.level }}</span>
-            </div>
-            <div
-              class="avatar-overlay absolute inset-0 flex items-center justify-center opacity-0 transition-opacity-300"
-            >
-              <el-icon :size="16" color="white"><Camera /></el-icon>
-            </div>
           </div>
+          <div class="absolute -bottom-1 -right-1 px-1 py-0.5 rounded text-[10px] font-bold text-white bg-gradient-to-r from-accent-primary to-accent-secondary shadow-sm">
+            Lv.{{ userStore.level }}
+          </div>
+        </div>
 
-          <!-- 用户信息 -->
-          <div class="user-info flex-1 min-w-0">
-            <div class="user-name-row flex items-center gap-8 m-b-4">
-              <span class="user-name font-14 font-bold truncate">{{
-                userStore.name || '未登录'
-              }}</span>
-              <button
-                class="edit-btn p-4 border-none bg-transparent cursor-pointer flex items-center justify-center"
-                @click="openUserInfoDialog"
-                title="编辑用户信息"
-              >
-                <el-icon :size="13"><Edit /></el-icon>
-              </button>
-            </div>
-            <div class="user-id font-11">ID: {{ userStore.id?.slice(0, 12) }}...</div>
+        <!-- 用户信息 -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-1.5">
+            <span class="text-sm font-semibold text-text truncate">{{ userStore.name || '未登录' }}</span>
+            <i class="i-ph-pencil-simple text-text-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
+          <div class="text-[10px] text-text-muted truncate">ID: {{ userStore.id?.slice(0, 8) }}...</div>
         </div>
       </div>
     </div>
 
     <!-- 中间滚动区域 -->
-    <div v-scrollbar class="flex-1 min-h-0">
-      <div class="side-content p-b-16">
+    <div class="flex-1 min-h-0 relative z-1 flex flex-col">
+      <div class="flex-1 overflow-y-auto scrollbar-thin px-3 py-2 space-y-2">
         <!-- 公告区 -->
-        <div class="notice-section m-b-24">
-          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-bold">
-            <el-icon class="section-icon" :size="16"><Bell /></el-icon>
+        <section class="section-card">
+          <div class="section-header flex items-center gap-1.5 mb-1.5 text-xs font-semibold">
+            <i class="i-ph-bell text-accent-primary text-sm" />
             <span>系统公告</span>
           </div>
-          <div class="notice-content m-x-16 flex flex-col gap-10">
+          <div class="space-y-1.5">
             <div
               v-if="systemStore.newSpaceNotice"
-              class="notice-item notice-item--highlight flex items-center gap-10 p-y-10 p-x-12 font-12 border border-[var(--border)] transition-all-300"
+              class="notice-item flex items-center gap-2 p-2 rounded-md bg-accent-primary/5 border border-accent-primary/20 text-xs"
             >
-              <span class="notice-tag p-y-2 p-x-6 font-10 font-bold shrink-0">新</span>
-              <span>{{ systemStore.newSpaceNotice }}</span>
-            </div>
-            <div
-              v-if="systemStore.newUpdateNotice"
-              class="notice-item flex items-center gap-10 p-y-10 p-x-12 font-12 border border-[var(--border)] transition-all-300"
-            >
-              <span class="notice-tag notice-tag--update p-y-2 p-x-6 font-10 font-bold shrink-0"
-                >更</span
-              >
-              <span>{{ systemStore.newUpdateNotice }}</span>
+              <span class="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold text-white bg-accent-primary">新</span>
+              <span class="text-text-secondary truncate">{{ systemStore.newSpaceNotice }}</span>
             </div>
             <div
               v-if="!systemStore.newSpaceNotice && !systemStore.newUpdateNotice"
-              class="notice-empty p-20 text-center font-12 border border-dashed border-[var(--border)]"
+              class="p-3 text-center text-xs text-text-muted border border-dashed border-border rounded-md"
             >
               暂无公告
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- 在线玩家 -->
-        <div class="online-section m-b-24">
-          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-bold">
-            <el-icon class="section-icon" :size="16"><User /></el-icon>
-            <span>在线玩家</span>
-            <span class="online-count m-l-auto font-10 p-y-2 p-x-8">{{
-              hallStore.onlineUsers.length
-            }}</span>
+        <section class="section-card">
+          <div class="section-header flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-1.5 text-xs font-semibold">
+              <i class="i-ph-users text-accent-secondary text-sm" />
+              <span>在线玩家</span>
+            </div>
+            <span class="px-1.5 py-0.5 rounded-full bg-bg-elevated text-[10px] text-text-muted">
+              {{ hallStore.onlineUsers.length }}
+            </span>
           </div>
-          <div class="online-list p-x-16 flex flex-wrap gap-8">
+          <div class="flex flex-wrap gap-1.5">
             <div
-              v-for="user in hallStore.onlineUsers.slice(0, 8)"
+              v-for="user in hallStore.onlineUsers.slice(0, 6)"
               :key="user.sessionId"
-              class="online-item flex items-center gap-8 p-y-6 p-x-10 border border-[var(--border)] transition-all-200"
+              class="online-item flex items-center gap-1 px-1.5 py-1 rounded-md border border-border bg-bg-card/50 hover:bg-bg-elevated transition-colors"
             >
-              <el-avatar :size="28" :src="user.avatar || undefined" class="online-avatar">
+              <el-avatar :size="18" :src="user.avatar || undefined" class="shrink-0">
                 {{ user.name?.charAt(0) }}
               </el-avatar>
-              <span class="online-name font-11 truncate">{{ user.name }}</span>
-              <el-tag size="small" type="warning" class="online-level border-none h-18 font-9">
-                Lv.{{ user.level }}
-              </el-tag>
+              <span class="text-[10px] text-text-secondary truncate max-w-14">{{ user.name }}</span>
             </div>
             <div
               v-if="hallStore.onlineUsers.length === 0"
-              class="empty-state flex-1 flex flex-col items-center justify-center p-20 gap-12"
+              class="w-full py-2 text-center text-xs text-text-muted"
             >
-              <el-icon class="empty-icon opacity-50" :size="32"><ChatDotRound /></el-icon>
-              <span class="font-12">暂无玩家在线</span>
-            </div>
-            <div
-              v-if="hallStore.onlineUsers.length > 8"
-              class="more-users w-full text-center font-11 p-8 text-[var(--text-muted)]"
-            >
-              还有 {{ hallStore.onlineUsers.length - 8 }} 位玩家...
+              暂无玩家在线
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- 聊天区 -->
-        <div class="chat-section flex-1 flex flex-col min-h-200 m-b-24">
-          <div class="section-header flex items-center gap-8 p-x-16 p-b-12 font-14 font-bold">
-            <el-icon class="section-icon" :size="16"><ChatDotRound /></el-icon>
+        <section class="section-card flex-1 flex flex-col min-h-0">
+          <div class="section-header flex items-center gap-1.5 mb-1.5 text-xs font-semibold">
+            <i class="i-ph-chat-circle-dots text-accent-tertiary text-sm" />
             <span>大厅聊天</span>
           </div>
 
           <!-- 消息列表 -->
-          <div
-            class="message-list flex-1 p-x-16 flex flex-col gap-8 overflow-y-auto"
-            ref="messageListRef"
-          >
+          <div class="message-list flex-1 min-h-0 overflow-y-auto space-y-1" ref="messageListRef">
             <div
-              v-for="(msg, index) in hallStore.messages"
-              :key="index"
-              class="message-item p-y-6 p-x-10 font-12 border border-[var(--border)] break-all"
+              v-for="msg in hallStore.messages"
+              :key="msg.userName + msg.content"
+              class="message-item p-1.5 rounded-md bg-bg-elevated/50 text-xs"
             >
-              <span class="message-name font-bold color-[var(--accent-primary)]">{{
-                msg.userName
-              }}</span>
-              <span class="message-colon color-[var(--text-muted)] m-x-2">:</span>
-              <span class="message-content color-[var(--text)]">{{ msg.content }}</span>
+              <span class="font-semibold text-accent-primary">{{ msg.userName }}</span>
+              <span class="text-text-muted mx-1">:</span>
+              <span class="text-text">{{ msg.content }}</span>
             </div>
             <div
               v-if="hallStore.messages.length === 0"
-              class="empty-state flex-1 flex flex-col items-center justify-center p-20 gap-12"
+              class="flex-1 flex flex-col items-center justify-center py-4 gap-1 text-xs text-text-muted"
             >
-              <el-icon class="empty-icon opacity-50" :size="32"><ChatDotRound /></el-icon>
-              <span class="font-12">暂无消息，快来聊天吧~</span>
+              <i class="i-ph-chat-teardrop-dots text-lg opacity-50" />
+              <span>暂无消息</span>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
 
-    <!-- 底部功能区 (固定) -->
-    <div class="side-footer shrink-0 border-t border-[var(--border)]">
+    <!-- 底部功能区 -->
+    <div class="relative shrink-0 z-1 bg-bg-elevated/80 backdrop-blur border-t border-border">
       <!-- 消息输入 -->
-      <div class="message-input-area p-t-16 p-x-16 p-b-12 relative">
+      <div class="px-3 py-2">
         <el-input
           v-model="inputContent"
           placeholder="说点什么..."
           :disabled="!hallStore.connected"
           @keydown="handleKeydown"
           maxlength="200"
-          size="default"
+          size="small"
           class="message-input"
         >
           <template #append>
             <el-button
               :disabled="!hallStore.connected || !inputContent.trim()"
               @click="handleSend"
-              class="send-btn bg-transparent border-none p-0 h-full flex items-center justify-center"
+              class="!px-2 !bg-gradient-to-r !from-accent-primary !to-accent-secondary !border-none !text-white !text-xs"
             >
-              <el-icon class="color-white" :size="16"><Promotion /></el-icon>
+              <i class="i-ph-paper-plane-tilt" />
             </el-button>
           </template>
         </el-input>
-        <div
-          v-if="!hallStore.connected"
-          class="connection-hint absolute left-16 right-16 flex items-center justify-center gap-6 p-4 font-10 border border-[var(--border)] -translate-y-1/2"
-        >
-          <span class="hint-dot w-4 h-4 rounded-full"></span>
-          正在连接服务器...
-        </div>
       </div>
 
-      <div
-        class="w-full p-x-14 p-y-8 flex items-center justify-between font-12 color-[var(--text-muted)] border-t border-[var(--border)]"
-      >
-        <div>下午好，现在是16:00</div>
-        <div class="flex items-center gap-8">
-          <el-icon
-            class="cursor-pointer transition-colors hover:color-[var(--warning)]"
-            :class="{ 'color-[var(--warning)]': systemStore.theme === 'light' }"
+      <!-- 底部工具栏 -->
+      <div class="px-3 pb-2 flex items-center justify-between">
+        <span class="text-[10px] text-text-muted">{{ new Date().getHours() >= 12 ? '下午' : '上午' }}好</span>
+        <div class="flex items-center gap-1">
+          <button
+            class="p-1 rounded hover:bg-bg-hover transition-colors"
+            :class="{ 'text-warning': systemStore.theme === 'light' }"
             @click="systemStore.setTheme('light')"
+            title="浅色模式"
           >
-            <Sunny />
-          </el-icon>
-          <el-icon
-            class="cursor-pointer transition-colors hover:color-[var(--accent-primary)]"
-            :class="{ 'color-[var(--accent-primary)]': systemStore.theme === 'dark' }"
+            <i class="i-ph-sun text-xs" />
+          </button>
+          <button
+            class="p-1 rounded hover:bg-bg-hover transition-colors"
+            :class="{ 'text-accent-primary': systemStore.theme === 'dark' }"
             @click="systemStore.setTheme('dark')"
+            title="深色模式"
           >
-            <Moon />
-          </el-icon>
+            <i class="i-ph-moon text-xs" />
+          </button>
         </div>
       </div>
     </div>
@@ -303,295 +261,63 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .page-side {
-  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-
-  .side-header {
-    background: linear-gradient(180deg, var(--bg-elevated) 0%, transparent 100%);
-
-    .header-decoration {
-      .deco-line {
-        background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
-      }
-
-      .deco-icon {
-        color: var(--accent-primary);
-        filter: drop-shadow(0 0 6px var(--accent-glow));
-        animation: pulse 2s ease-in-out infinite;
-      }
-    }
-
-    .side-title {
-      color: var(--text);
-      letter-spacing: 2px;
-    }
-
-    .online-indicator {
-      background: var(--bg-card);
-      border-radius: 12px;
-      color: var(--text-muted);
-
-      .indicator-dot {
-        border-radius: 50%;
-        background: var(--text-muted);
-        transition: all 0.3s ease;
-      }
-
-      &.connected {
-        color: var(--success);
-        border-color: rgba(16, 185, 129, 0.2);
-
-        .indicator-dot {
-          background: var(--success);
-          box-shadow: 0 0 8px var(--success);
-        }
-      }
-    }
-  }
-
-  .user-card {
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
-
-    .card-glow {
-      top: -50px;
-      right: -50px;
-      background: var(--accent-gradient);
-      filter: blur(40px);
-    }
-
-    .user-main {
-      .avatar-container {
-        .user-avatar {
-          background: var(--bg-secondary);
-
-          &:hover {
-            border-color: var(--accent-primary);
-          }
-        }
-
-        .avatar-level {
-          bottom: -4px;
-          right: -4px;
-          background: var(--accent-gradient);
-          color: white;
-          border-radius: 10px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .avatar-overlay {
-          background: rgba(0, 0, 0, 0.4);
-          border-radius: 50%;
-          color: white;
-        }
-
-        &:hover {
-          .avatar-overlay {
-            opacity: 1;
-          }
-        }
-      }
-
-      .user-info {
-        .user-name {
-          color: var(--text);
-        }
-
-        .edit-btn {
-          color: var(--text-muted);
-
-          &:hover {
-            color: var(--accent-primary);
-          }
-        }
-
-        .user-id {
-          color: var(--text-secondary);
-          font-family: var(--font-mono);
-          letter-spacing: 0.5px;
-        }
-      }
-    }
-  }
-
-  .section-header {
-    color: var(--text);
-
-    .section-icon {
-      color: var(--accent-primary);
-    }
-  }
-
-  .notice-section {
-    .notice-item {
-      background: var(--bg-elevated);
-      border-radius: 8px;
-      color: var(--text-secondary);
-
-      .notice-tag {
-        border-radius: 4px;
-        color: white;
-        background: var(--accent-gradient);
-
-        &--update {
-          background: var(--success-gradient);
-        }
-      }
-
-      &--highlight {
-        border-color: var(--accent-primary);
-        background: rgba(124, 58, 237, 0.05);
-        color: var(--text);
-      }
-
-      &:hover {
-        transform: translateX(4px);
-      }
-    }
-
-    .notice-empty {
-      color: var(--text-muted);
-      background: var(--bg-card);
-      border-radius: 8px;
-    }
-  }
-
-  .online-section {
-    .online-count {
-      background: var(--bg-secondary);
-      border-radius: 10px;
-      color: var(--text-muted);
-    }
-
-    .online-item {
-      background: var(--bg-card);
-      border-radius: 16px;
-
-      .online-name {
-        color: var(--text-secondary);
-      }
-
-      .online-level {
-        background: rgba(251, 191, 36, 0.1);
-        color: var(--warning);
-        border-radius: 10px;
-        line-height: 16px;
-      }
-
-      &:hover {
-        border-color: var(--accent-primary);
-        background: var(--bg-elevated);
-      }
-    }
-  }
-
-  .chat-section {
-    .message-list {
-      .message-item {
-        background: var(--bg-card);
-        border-radius: 8px;
-        line-height: 1.5;
-      }
-    }
-  }
-
-  .empty-state {
-    color: var(--text-muted);
-  }
+  max-height: 100vh;
 }
 
-.side-footer {
-  background: var(--bg-elevated);
-
-  .message-input-area {
-    .message-input {
-      :deep(.el-input-group__append) {
-        background: var(--accent-primary);
-        color: white;
-        border: none;
-        padding: 0 12px;
-        transition: opacity 0.2s ease;
-
-        &:hover {
-          opacity: 0.9;
-        }
-      }
-
-      :deep(.el-input__wrapper) {
-        background: var(--bg-secondary);
-        box-shadow: none;
-        border: 1px solid var(--border);
-
-        &.is-focus {
-          border-color: var(--accent-primary);
-        }
-      }
-    }
-
-    .connection-hint {
-      background: var(--bg-secondary);
-      border-radius: 4px;
-      color: var(--text-muted);
-
-      .hint-dot {
-        background: var(--warning);
-        animation: pulse 1s infinite;
-      }
-    }
-  }
+.section-card {
+  background: var(--bg-card/60);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
+.user-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.message-input :deep(.el-input__wrapper) {
+  background: var(--bg-secondary);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+.message-input :deep(.el-input__wrapper:hover) {
+  border-color: var(--accent-primary);
+}
+
+.message-input :deep(.el-input__wrapper.is-focus) {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-primary)/20;
+}
+
+.message-input :deep(.el-input__inner) {
+  color: var(--text);
+  font-size: 12px;
+}
+
+.message-input :deep(.el-input__inner::placeholder) {
+  color: var(--text-muted);
+  font-size: 12px;
 }
 
 :deep(.game-dialog) {
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-xl);
+}
 
-  .el-dialog__header {
-    margin: 0;
-    padding: 20px;
-    border-bottom: 1px solid var(--border);
+:deep(.game-dialog .el-dialog__header) {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
 
-    .el-dialog__title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-    }
-  }
-
-  .el-dialog__body {
-    padding: 24px 20px;
-  }
-
-  .el-dialog__footer {
-    padding: 0 20px 20px;
-    border-top: none;
-  }
-
-  .dialog-btn {
-    border-radius: 8px;
-
-    &--primary {
-      background: var(--accent-gradient);
-      border: none;
-      box-shadow: 0 4px 12px var(--accent-glow);
-
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px var(--accent-glow);
-      }
-    }
-  }
+:deep(.game-dialog .el-dialog__body) {
+  padding: 16px;
 }
 </style>
