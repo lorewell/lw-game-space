@@ -1,6 +1,9 @@
 import Redis from 'ioredis'
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379'
+// 优先使用 REDIS_URL，否则根据 REDIS_HOST 和 REDIS_PORT 构建
+const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
+const REDIS_PORT = parseInt(process.env.REDIS_PORT || '6379', 10)
+const REDIS_URL = process.env.REDIS_URL || `redis://${REDIS_HOST}:${REDIS_PORT}`
 
 export const redis = new Redis(REDIS_URL, {
   lazyConnect: true,

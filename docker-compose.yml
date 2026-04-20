@@ -1,5 +1,9 @@
 version: '3.8'
 
+# 从根目录 .env 文件加载环境变量
+env_file:
+  - .env
+
 services:
   client:
     build:
@@ -19,10 +23,11 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      # 覆盖 .env 中的本地地址，使用 Docker 内部网络
       - MONGO_URI=mongodb://mongo:27017/lw-game-space
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379
     depends_on:
       - mongo
       - redis

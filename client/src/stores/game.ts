@@ -25,7 +25,8 @@ export const useGameStore = defineStore('game', {
       if (room) await this.leave()
 
       const userStore = useUserStore()
-      client = new Colyseus.Client('ws://localhost:3000')
+      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3000'
+      client = new Colyseus.Client(wsUrl)
 
       try {
         room = await client.joinOrCreate('game_room', {
