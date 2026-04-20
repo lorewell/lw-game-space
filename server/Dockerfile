@@ -1,24 +1,12 @@
-# ---- Build Stage ----
-FROM node:24-alpine AS builder
-
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-WORKDIR /app
-
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-COPY . .
-RUN pnpm build
-
-# ---- Production Stage ----
+# 直接使用本地构建好的产物运行
 FROM node:24-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
+# 复制本地构建产物
+COPY dist ./dist
+COPY node_modules ./node_modules
+COPY package.json ./
 
 EXPOSE 3000
 
