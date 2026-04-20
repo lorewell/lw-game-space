@@ -6,6 +6,9 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
+# 强制不使用缓存（每次提交修改此时间戳）
+ARG CACHE_BUST=202504201035
+
 # 复制依赖文件
 COPY package*.json pnpm-lock.yaml* ./
 

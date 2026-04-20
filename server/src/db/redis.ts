@@ -5,6 +5,8 @@ const REDIS_HOST = process.env.REDIS_HOST || 'localhost'
 const REDIS_PORT = parseInt(process.env.REDIS_PORT || '6379', 10)
 const REDIS_URL = process.env.REDIS_URL || `redis://${REDIS_HOST}:${REDIS_PORT}`
 
+console.log('[Redis] 环境变量:', { REDIS_HOST, REDIS_PORT, REDIS_URL })
+
 export const redis = new Redis(REDIS_URL, {
   lazyConnect: true,
   retryStrategy(times) {
