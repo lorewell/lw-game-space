@@ -1,14 +1,14 @@
 version: '3.8'
 
-# 从根目录 .env 文件加载环境变量
-env_file:
-  - .env
-
 services:
   client:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        # 构建时传递环境变量给 Vite
+        VITE_API_BASE_URL: http://localhost:3000
+        VITE_WS_URL: ws://localhost:3000
     ports:
       - "8848:8848"
     depends_on:
@@ -21,6 +21,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    env_file:
+      - ./server/.env
     environment:
       - NODE_ENV=production
       # 覆盖 .env 中的本地地址，使用 Docker 内部网络

@@ -6,6 +6,14 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
+# 定义构建参数
+ARG VITE_API_BASE_URL
+ARG VITE_WS_URL
+
+# 设置为环境变量供 Vite 使用
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_WS_URL=${VITE_WS_URL}
+
 # 复制依赖文件
 COPY package*.json pnpm-lock.yaml* ./
 
