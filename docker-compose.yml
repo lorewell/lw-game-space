@@ -21,11 +21,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    env_file:
-      - ./server/.env
     environment:
       - NODE_ENV=production
-      # 覆盖 .env 中的本地地址，使用 Docker 内部网络
+      - PORT=3000
       - MONGO_URI=mongodb://mongo:27017/lw-game-space
       - REDIS_HOST=redis
       - REDIS_PORT=6379
