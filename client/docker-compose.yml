@@ -1,0 +1,9 @@
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lw-game-client
+    ports:
+      - "8848:8848"
+    restart: unless-stopped
