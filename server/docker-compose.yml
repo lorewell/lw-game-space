@@ -1,6 +1,5 @@
 services:
   server:
-    image: lw-game-space/server:latest
     build:
       context: .
       dockerfile: Dockerfile
