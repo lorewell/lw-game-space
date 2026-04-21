@@ -155,24 +155,16 @@ a:hover {
   color: var(--accent-secondary);
 }
 
-/* ========== 滚动条 ========== */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ========== 滚动条 - 使用 overlayscrollbars，隐藏原生滚动条 ========== */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.3);
-  border-radius: 3px;
-  transition: background 0.2s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.5);
+*::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+  width: 0;
+  height: 0;
 }
 
 /* ========== Element Plus 主题覆盖 ========== */

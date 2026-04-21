@@ -183,9 +183,6 @@ export default defineConfig({
     // 玻璃态
     'glass': 'backdrop-blur-xl bg-bg-secondary/80',
 
-    // 滚动条
-    'scrollbar-thin': 'scrollbar scrollbar-thumb-accent-primary/50 scrollbar-track-transparent scrollbar-thumb-rounded',
-
     // 状态点
     'status-dot': 'w-2 h-2 rounded-full animate-pulse',
 
@@ -194,8 +191,6 @@ export default defineConfig({
   },
 
   rules: [
-    // 自定义滚动条
-    ['scrollbar-thin', { 'scrollbar-width': 'thin' }],
     // 文字阴影
     ['text-glow', { 'text-shadow': '0 0 10px var(--tw-shadow-color)' }],
     // 去除边框
@@ -226,39 +221,6 @@ export default defineConfig({
     // 文字截断
     ['line-clamp-1', { 'overflow': 'hidden', 'display': '-webkit-box', '-webkit-line-clamp': '1', '-webkit-box-orient': 'vertical' }],
     ['line-clamp-2', { 'overflow': 'hidden', 'display': '-webkit-box', '-webkit-line-clamp': '2', '-webkit-box-orient': 'vertical' }],
-  ],
-
-  preflights: [
-    {
-      getCSS: () => `
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-          width: 6px;
-          height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: rgba(99, 102, 241, 0.3);
-          border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(99, 102, 241, 0.5);
-        }
-
-        /* 选中文字样式 */
-        ::selection {
-          background: rgba(99, 102, 241, 0.3);
-          color: inherit;
-        }
-
-        /* 平滑滚动 */
-        html {
-          scroll-behavior: smooth;
-        }
-      `
-    }
   ],
 
   safelist: [

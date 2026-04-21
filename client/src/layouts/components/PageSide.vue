@@ -76,11 +76,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="page-side h-full flex flex-col w-80 bg-gradient-to-b from-bg-secondary to-bg-primary border-l border-border relative overflow-hidden">
+  <div
+    class="page-side h-full flex flex-col w-80 bg-gradient-to-b from-bg-secondary to-bg-primary border-l border-border relative overflow-hidden"
+  >
     <!-- 背景装饰 -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden">
       <div class="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-accent-primary/5 blur-60" />
-      <div class="absolute -bottom-10 right-0 w-32 h-32 rounded-full bg-accent-secondary/5 blur-50" />
+      <div
+        class="absolute -bottom-10 right-0 w-32 h-32 rounded-full bg-accent-secondary/5 blur-50"
+      />
     </div>
 
     <!-- 顶部区域 - 用户卡片 -->
@@ -96,15 +100,24 @@ onUnmounted(() => {
       </div>
 
       <!-- 用户信息卡片 -->
-      <div class="user-card relative flex items-center gap-2 p-2 rounded-lg border border-border bg-bg-card/80 hover:border-accent-primary/50 transition-all cursor-pointer" @click="openUserInfoDialog">
+      <div
+        class="user-card relative flex items-center gap-2 p-2 rounded-lg border border-border bg-bg-card/80 hover:border-accent-primary/50 transition-all cursor-pointer"
+        @click="openUserInfoDialog"
+      >
         <!-- 头像 -->
         <div class="relative shrink-0">
           <div class="p-0.5 rounded-full bg-gradient-to-r from-accent-primary to-accent-secondary">
-            <el-avatar :size="36" :src="userStore.avatar || undefined" class="bg-bg-secondary border-2 border-bg-card">
+            <el-avatar
+              :size="36"
+              :src="userStore.avatar || undefined"
+              class="bg-bg-secondary border-2 border-bg-card"
+            >
               {{ userStore.name?.charAt(0) || '?' }}
             </el-avatar>
           </div>
-          <div class="absolute -bottom-1 -right-1 px-1 py-0.5 rounded text-[10px] font-bold text-white bg-gradient-to-r from-accent-primary to-accent-secondary shadow-sm">
+          <div
+            class="absolute -bottom-1 -right-1 px-1 py-0.5 rounded text-[10px] font-bold text-white bg-gradient-to-r from-accent-primary to-accent-secondary shadow-sm"
+          >
             Lv.{{ userStore.level }}
           </div>
         </div>
@@ -112,17 +125,23 @@ onUnmounted(() => {
         <!-- 用户信息 -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5">
-            <span class="text-sm font-semibold text-text truncate">{{ userStore.name || '未登录' }}</span>
-            <i class="i-ph-pencil-simple text-text-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity" />
+            <span class="text-sm font-semibold text-text truncate">{{
+              userStore.name || '未登录'
+            }}</span>
+            <i
+              class="i-ph-pencil-simple text-text-muted text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+            />
           </div>
-          <div class="text-[10px] text-text-muted truncate">ID: {{ userStore.id?.slice(0, 8) }}...</div>
+          <div class="text-[10px] text-text-muted truncate">
+            ID: {{ userStore.id?.slice(0, 8) }}...
+          </div>
         </div>
       </div>
     </div>
 
     <!-- 中间滚动区域 -->
     <div class="flex-1 min-h-0 relative z-1 flex flex-col">
-      <div class="flex-1 overflow-y-auto scrollbar-thin px-3 py-2 space-y-2">
+      <div class="flex-1 overflow-y-auto px-3 py-2 space-y-2">
         <!-- 公告区 -->
         <section class="section-card">
           <div class="section-header flex items-center gap-1.5 mb-1.5 text-xs font-semibold">
@@ -134,7 +153,10 @@ onUnmounted(() => {
               v-if="systemStore.newSpaceNotice"
               class="notice-item flex items-center gap-2 p-2 rounded-md bg-accent-primary/5 border border-accent-primary/20 text-xs"
             >
-              <span class="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold text-white bg-accent-primary">新</span>
+              <span
+                class="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold text-white bg-accent-primary"
+                >新</span
+              >
               <span class="text-text-secondary truncate">{{ systemStore.newSpaceNotice }}</span>
             </div>
             <div
@@ -234,7 +256,9 @@ onUnmounted(() => {
 
       <!-- 底部工具栏 -->
       <div class="px-3 pb-2 flex items-center justify-between">
-        <span class="text-[10px] text-text-muted">{{ new Date().getHours() >= 12 ? '下午' : '上午' }}好</span>
+        <span class="text-[10px] text-text-muted"
+          >{{ new Date().getHours() >= 12 ? '下午' : '上午' }}好</span
+        >
         <div class="flex items-center gap-1">
           <button
             class="p-1 rounded hover:bg-bg-hover transition-colors"
@@ -293,7 +317,7 @@ onUnmounted(() => {
 
 .message-input :deep(.el-input__wrapper.is-focus) {
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 2px var(--accent-primary)/20;
+  box-shadow: 0 0 0 2px var(--accent-primary) / 20;
 }
 
 .message-input :deep(.el-input__inner) {
