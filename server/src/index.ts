@@ -9,6 +9,7 @@ import { GameRoom } from "./rooms/GameRoom";
 import { HallRoom } from "./rooms/HallRoom";
 import { connectMongo } from "./db/mongo";
 import { connectRedis } from "./db/redis";
+import { seedRooms } from "./db/seed";
 import userRoutes from "./routes/user";
 import roomRoutes from "./routes/room";
 import chatRoutes from "./routes/chat";
@@ -19,6 +20,9 @@ async function bootstrap() {
   // 初始化数据库连接
   await connectMongo();
   await connectRedis();
+
+  // 初始化 9 个固定房间
+  await seedRooms();
 
   const app = express();
 
