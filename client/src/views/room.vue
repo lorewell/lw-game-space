@@ -81,12 +81,12 @@ onMounted(() => {
     </header>
 
     <!-- 房间网格 -->
-    <main class="flex-1 min-h-0 p-6 relative z-1">
-      <div class="room-grid grid grid-cols-3 grid-rows-3 gap-5 h-full" :class="{ 'is-loading': roomStore.loading }">
+    <main v-scrollbar class="flex-1 min-h-0 p-6 relative z-1 overflow-hidden">
+      <div class="room-grid grid grid-cols-3 grid-rows-3 gap-5" :class="{ 'is-loading': roomStore.loading }">
         <div
           v-for="(room, index) in roomStore.rooms"
           :key="room.roomId"
-          class="room-cell min-w-0 min-h-0 cursor-pointer animate-cell-in"
+          class="room-cell min-w-0 min-h-40 cursor-pointer animate-cell-in"
           :style="{ animationDelay: `${index * 60}ms` }"
           @click="enterRoom(room)"
         >
